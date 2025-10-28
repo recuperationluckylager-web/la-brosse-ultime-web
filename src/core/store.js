@@ -1,27 +1,97 @@
-export class Store {
-  constructor(initial) { this.state = initial || {}; this.listeners = []; this.actions = {}; }
-  getState() { return structuredClone(this.state); }
-  subscribe(fn) { this.listeners.push(fn); return () => { this.listeners = this.listeners.filter(s=>s!==fn); }; }
-  commit(patch) {
-    this.state = deepMerge(this.state, patch);
-    this.listeners.forEach(l=>l(this.getState(), patch));
+const hasStructuredClone = typeof structuredClone === 'function';
+
+const clone = (value) => {
+  if (value === undefined || value === null) {
+    return value;
   }
-  registerActions(actionSet) { this.actions = Object.assign({}, this.actions, actionSet); }
+  if (hasStructuredClone) {
+    return structuredClone(value);
+  }
+  try {
+    return JSON.parse(JSON.stringify(value));
+  } catch (error) {
+    console.warn('Clone échoué, retour de la valeur originale.', error);
+    return value;
+  }
+};
+
+const mergeObjects = (target, source) => {
+  if (!source || typeof source !== 'object') {
+    return clone(target ?? {});
+  }
+
+  const base = clone(target ?? {});
+  for (const key of Object.keys(source)) {
+    const next = source[key];
+    if (Array.isArray(next)) {
+      base[key] = next.map((entry) => clone(entry));
+    } else if (next && typeof next === 'object') {
+      base[key] = mergeObjects(base[key] ?? {}, next);
+    } else {
+      base[key] = next;
+    }
+  }
+  return base;
+};
+
+export class Store {
+  constructor(initial) {
+    this.state = clone(initial ?? {});
+    this.listeners = [];
+    this.actions = {};
+  }
+
+  getState() {
+    return clone(this.state);
+  }
+
+  subscribe(fn) {
+    if (typeof fn !== 'function') {
+      return () => {};
+    }
+    this.listeners.push(fn);
+    return () => {
+      this.listeners = this.listeners.filter((listener) => listener !== fn);
+    };
+  }
+
+  commit(patch) {
+    if (!patch || typeof patch !== 'object') {
+      return;
+    }
+
+    this.state = mergeObjects(this.state, patch);
+    const snapshot = this.getState();
+    this.listeners.forEach((listener) => {
+      try {
+        listener(snapshot, patch);
+      } catch (error) {
+        console.error('Store subscriber failed', error);
+      }
+    });
+  }
+
+  registerActions(actionSet) {
+    if (!actionSet || typeof actionSet !== 'object') {
+      return;
+    }
+    this.actions = Object.assign({}, this.actions, actionSet);
+  }
+
   dispatch(actionName, payload) {
     const fn = this.actions[actionName];
-    if (!fn) throw new Error('Action inconnue '+actionName);
+    if (!fn) {
+      throw new Error(`Action inconnue ${actionName}`);
+    }
+
     const patch = fn(this.getState(), payload) || {};
-    if (patch.state) this.commit(patch.state);
-    if (patch.log) { this.commit({ journal: [...(this.state.journal||[]), patch.log] }); }
+    if (patch.state) {
+      this.commit(patch.state);
+    }
+    if (patch.log) {
+      const history = [...(this.state.journal || []), patch.log].slice(-100);
+      this.commit({ journal: history });
+    }
     return patch;
   }
-}
-function deepMerge(a,b){
-  if (!b) return a;
-  const out = structuredClone(a);
-  for (const k of Object.keys(b)){
-    if (b[k] && typeof b[k] === 'object' && !Array.isArray(b[k])) out[k] = deepMerge(out[k]||{}, b[k]);
-    else out[k] = b[k];
-  }
-  return out;
 }
