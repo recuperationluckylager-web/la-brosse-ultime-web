@@ -1,0 +1,16 @@
+export const conditions = {
+  highBuzz: (state) => (state.stats?.buzz ?? 0) >= 8,
+  buzzStable: (state) => (state.stats?.buzz ?? 0) <= 6,
+  lucidEnough: (state) => (state.stats?.lucidite ?? 0) >= 12,
+  lucidHigh: (state) => (state.stats?.lucidite ?? 0) >= 15,
+  hasTape: (state) => (state.inventory || []).some((i) => i.id === 'duct_tape' && i.qty > 0),
+  hasChips: (state) => (state.inventory || []).some((i) => i.id === 'chips' && i.qty > 0),
+  hasThermos: (state) => (state.inventory || []).some((i) => i.id === 'thermos' && i.qty > 0),
+  hasSirop: (state) => (state.inventory || []).some((i) => i.id === 'sirop_erable' && i.qty > 0),
+  hasDiscoveredQuai: (state) => (state.mapZones || []).includes('quai'),
+  belvedereUnlocked: (state) => (state.mapZones || []).includes('belvedere'),
+  cabaneUnlocked: (state) => (state.mapZones || []).includes('cabane'),
+  relationHigh: (state) => (state.stats?.relation ?? 0) >= 4,
+  tenacious: (state) => (state.stats?.tenacite ?? 0) >= 12,
+  brosseForte: (state) => (state.stats?.brosse ?? 0) >= 5,
+};
