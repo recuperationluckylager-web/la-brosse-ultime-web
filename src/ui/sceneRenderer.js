@@ -14,6 +14,7 @@ export class SceneRenderer {
       conditions: safeAssets.conditions ?? {},
       app: safeAssets.app ?? {},
     };
+    this.assets = assets;
     this.unsubscribe = null;
     this.currentSceneId = null;
     this.selectedItemId = null;
