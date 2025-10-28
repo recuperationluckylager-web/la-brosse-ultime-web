@@ -2,6 +2,18 @@ export class SceneRenderer {
   constructor(root, store, assets) {
     this.root = root;
     this.store = store;
+    const safeAssets = assets || {};
+    this.assets = {
+      scenes: safeAssets.scenes ?? {},
+      items: safeAssets.items ?? {},
+      map: safeAssets.map ?? {},
+      dice: safeAssets.dice ?? {
+        roll: async () => ({ roll: 1, faces: 20, total: 1, ok: null, context: '' }),
+      },
+      persistence: safeAssets.persistence ?? { save: () => false, load: () => false },
+      conditions: safeAssets.conditions ?? {},
+      app: safeAssets.app ?? {},
+    };
     this.assets = assets;
     this.unsubscribe = null;
     this.currentSceneId = null;
@@ -10,7 +22,7 @@ export class SceneRenderer {
     this.selectedZoneId = null;
     this.hoveredZoneId = null;
     this.zonesById = {};
-    const zoneEntries = (assets?.map?.zones && Object.values(assets.map.zones)) || [];
+    const zoneEntries = (this.assets.map?.zones && Object.values(this.assets.map.zones)) || [];
     zoneEntries.forEach((zone) => {
       if (zone?.id) {
         this.zonesById[zone.id] = zone;
@@ -19,6 +31,9 @@ export class SceneRenderer {
   }
 
   start() {
+    if (!this.root) {
+      throw new Error('SceneRenderer requires a valid root element.');
+    }
     this.buildShell();
     this.unsubscribe = this.store.subscribe(() => this.render());
     this.render();
@@ -128,50 +143,70 @@ export class SceneRenderer {
   }
 
   bindUI() {
-    this.root.querySelector('#modal-close').addEventListener('click', () => this.hideModal());
-    this.root.querySelector('#choices-container').addEventListener('click', (e) => {
-      const btn = e.target.closest('button');
-      if (!btn) return;
-      const target = btn.dataset.target;
-      const action = btn.dataset.action;
-      const dice = btn.dataset.dice === 'true';
-      if (action) this.store.dispatch(action);
-      if (dice) {
-        const faces = Number(btn.dataset.faces || 20);
-        const threshold = btn.dataset.threshold ? Number(btn.dataset.threshold) : null;
-        const onSuccess = btn.dataset.onSuccess;
-        const onFailure = btn.dataset.onFailure;
-        this.assets.dice.roll({ faces, threshold, context: btn.dataset.context || '' }).then((res) => {
-          this.showModal('Résultat', `D${faces} = ${res.total}${res.ok === null ? '' : res.ok ? ' — Succès' : ' — Échec'}`);
-          if (res.ok && onSuccess) this.renderSceneId(onSuccess);
-          if (res.ok === false && onFailure) this.renderSceneId(onFailure);
-        });
-      } else if (target) {
-        this.renderSceneId(target);
-      }
-    });
+    const modalClose = this.root.querySelector('#modal-close');
+    if (modalClose) {
+      modalClose.addEventListener('click', () => this.hideModal());
+    }
+
+    const choicesContainer = this.root.querySelector('#choices-container');
+    if (choicesContainer) {
+      choicesContainer.addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        const target = btn.dataset.target;
+        const action = btn.dataset.action;
+        const dice = btn.dataset.dice === 'true';
+        if (action) this.store.dispatch(action);
+        if (dice) {
+          const faces = Number(btn.dataset.faces || 20);
+          const threshold = btn.dataset.threshold ? Number(btn.dataset.threshold) : null;
+          const onSuccess = btn.dataset.onSuccess;
+          const onFailure = btn.dataset.onFailure;
+          if (typeof this.assets.dice?.roll === 'function') {
+            this.assets
+              .dice
+              .roll({ faces, threshold, context: btn.dataset.context || '' })
+              .then((res) => {
+                this.showModal(
+                  'Résultat',
+                  `D${faces} = ${res.total}${res.ok === null ? '' : res.ok ? ' — Succès' : ' — Échec'}`,
+                );
+                if (res.ok && onSuccess) this.renderSceneId(onSuccess);
+                if (res.ok === false && onFailure) this.renderSceneId(onFailure);
+              })
+              .catch((error) => {
+                console.error('Dice roll failed', error);
+              });
+          }
+        } else if (target) {
+          this.renderSceneId(target);
+        }
+      });
+    }
 
     const inventoryList = this.root.querySelector('#inventory-list');
-    inventoryList.addEventListener('click', (e) => {
-      const row = e.target.closest('[data-item-id]');
-      if (!row) return;
-      const itemId = row.dataset.itemId;
-      if (e.target.closest('button[data-use]')) {
-        const def = this.assets.items[itemId];
-        if (def?.action) {
-          this.store.dispatch(def.action);
+    if (inventoryList) {
+      inventoryList.addEventListener('click', (e) => {
+        const row = e.target.closest('[data-item-id]');
+        if (!row) return;
+        const itemId = row.dataset.itemId;
+        if (e.target.closest('button[data-use]')) {
+          const def = this.assets.items[itemId];
+          if (def?.action) {
+            this.store.dispatch(def.action);
+          }
         }
-      }
-      this.selectedItemId = itemId;
-      this.renderInventory(this.store.getState());
-    });
+        this.selectedItemId = itemId;
+        this.renderInventory(this.store.getState());
+      });
 
-    inventoryList.addEventListener('mouseover', (e) => {
-      const row = e.target.closest('[data-item-id]');
-      if (!row) return;
-      this.selectedItemId = row.dataset.itemId;
-      this.updateInventoryDetail(this.store.getState());
-    });
+      inventoryList.addEventListener('mouseover', (e) => {
+        const row = e.target.closest('[data-item-id]');
+        if (!row) return;
+        this.selectedItemId = row.dataset.itemId;
+        this.updateInventoryDetail(this.store.getState());
+      });
+    }
 
     const mapGrid = this.root.querySelector('#map-grid');
     if (mapGrid) {
@@ -241,36 +276,59 @@ export class SceneRenderer {
       });
     }
 
-    this.root.querySelector('#open-pause').addEventListener('click', () => this.openPause());
-    this.root.querySelector('#pause-resume').addEventListener('click', () => this.closePause());
-    this.root.querySelector('#pause-save').addEventListener('click', () => {
-      const ok = this.assets.persistence.save();
-      if (ok && this.assets.app?.addLog) this.assets.app.addLog('Sauvegarde manuelle effectuée.');
-      const extra = this.root.querySelector('#pause-extra');
-      extra.textContent = ok ? 'Sauvegarde réussie.' : 'Impossible de sauvegarder.';
-      extra.classList.remove('hidden');
-    });
-    this.root.querySelector('#pause-load').addEventListener('click', () => {
-      const ok = this.assets.persistence.load();
-      if (ok && this.assets.app?.addLog) this.assets.app.addLog('Sauvegarde rechargée depuis le menu pause.');
-      const extra = this.root.querySelector('#pause-extra');
-      extra.textContent = ok ? 'Sauvegarde rechargée.' : 'Aucune sauvegarde trouvée.';
-      extra.classList.remove('hidden');
-    });
-    this.root.querySelector('#pause-access').addEventListener('click', () => {
-      const extra = this.root.querySelector('#pause-extra');
-      extra.innerHTML = '<strong>Accessibilité :</strong> Active le mode contraste dans ton navigateur. Un mode lecture est prévu bientôt.';
-      extra.classList.remove('hidden');
-    });
-    this.root.querySelector('#pause-commands').addEventListener('click', () => {
-      const extra = this.root.querySelector('#pause-extra');
-      extra.innerHTML = '<strong>Commandes :</strong> Clique sur les choix, utilise l’inventaire ou appuie sur Échap pour revenir au jeu.';
-      extra.classList.remove('hidden');
-    });
+    const openPause = this.root.querySelector('#open-pause');
+    if (openPause) openPause.addEventListener('click', () => this.openPause());
+    const pauseResume = this.root.querySelector('#pause-resume');
+    if (pauseResume) pauseResume.addEventListener('click', () => this.closePause());
+    const pauseSave = this.root.querySelector('#pause-save');
+    if (pauseSave) {
+      pauseSave.addEventListener('click', () => {
+        const ok = this.assets.persistence?.save?.() ?? false;
+        if (ok && this.assets.app?.addLog) this.assets.app.addLog('Sauvegarde manuelle effectuée.');
+        const extra = this.root.querySelector('#pause-extra');
+        if (extra) {
+          extra.textContent = ok ? 'Sauvegarde réussie.' : 'Impossible de sauvegarder.';
+          extra.classList.remove('hidden');
+        }
+      });
+    }
+    const pauseLoad = this.root.querySelector('#pause-load');
+    if (pauseLoad) {
+      pauseLoad.addEventListener('click', () => {
+        const ok = this.assets.persistence?.load?.() ?? false;
+        if (ok && this.assets.app?.addLog) this.assets.app.addLog('Sauvegarde rechargée depuis le menu pause.');
+        const extra = this.root.querySelector('#pause-extra');
+        if (extra) {
+          extra.textContent = ok ? 'Sauvegarde rechargée.' : 'Aucune sauvegarde trouvée.';
+          extra.classList.remove('hidden');
+        }
+      });
+    }
+    const pauseAccess = this.root.querySelector('#pause-access');
+    if (pauseAccess) {
+      pauseAccess.addEventListener('click', () => {
+        const extra = this.root.querySelector('#pause-extra');
+        if (extra) {
+          extra.innerHTML = '<strong>Accessibilité :</strong> Active le mode contraste dans ton navigateur. Un mode lecture est prévu bientôt.';
+          extra.classList.remove('hidden');
+        }
+      });
+    }
+    const pauseCommands = this.root.querySelector('#pause-commands');
+    if (pauseCommands) {
+      pauseCommands.addEventListener('click', () => {
+        const extra = this.root.querySelector('#pause-extra');
+        if (extra) {
+          extra.innerHTML = '<strong>Commandes :</strong> Clique sur les choix, utilise l’inventaire ou appuie sur Échap pour revenir au jeu.';
+          extra.classList.remove('hidden');
+        }
+      });
+    }
 
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
         const overlay = this.root.querySelector('#pause-overlay');
+        if (!overlay) return;
         if (overlay.classList.contains('active')) this.closePause();
         else this.openPause();
       }
@@ -358,16 +416,27 @@ export class SceneRenderer {
   }
 
   renderHUD(state) {
-    document.getElementById('s-brosse').textContent = state.stats?.brosse ?? 0;
-    document.getElementById('s-buzz').textContent = state.stats?.buzz ?? 0;
-    document.getElementById('s-lucidite').textContent = state.stats?.lucidite ?? 0;
-    document.getElementById('s-tenacite').textContent = state.stats?.tenacite ?? 0;
-    document.getElementById('s-relation').textContent = state.stats?.relation ?? 0;
+    const statMap = [
+      ['#s-brosse', state.stats?.brosse ?? 0],
+      ['#s-buzz', state.stats?.buzz ?? 0],
+      ['#s-lucidite', state.stats?.lucidite ?? 0],
+      ['#s-tenacite', state.stats?.tenacite ?? 0],
+      ['#s-relation', state.stats?.relation ?? 0],
+    ];
+    statMap.forEach(([selector, value]) => {
+      const el = this.root.querySelector(selector);
+      if (el) {
+        el.textContent = value;
+      }
+    });
   }
 
   renderInventory(state) {
     const list = this.root.querySelector('#inventory-list');
     const detail = this.root.querySelector('#inventory-detail');
+    if (!list || !detail) {
+      return;
+    }
     list.innerHTML = '';
 
     const inventory = state.inventory || [];
@@ -535,7 +604,7 @@ export class SceneRenderer {
   }
 
   renderJournal(state) {
-    const box = document.getElementById('log-box');
+    const box = this.root.querySelector('#log-box');
     if (!box) return;
     box.innerHTML = '';
     (state.journal || []).slice(-50).forEach((line) => {
@@ -547,13 +616,18 @@ export class SceneRenderer {
   }
 
   showModal(title, body) {
-    document.getElementById('modal-title').textContent = title;
-    document.getElementById('modal-body').textContent = body;
-    document.getElementById('modal').style.display = 'flex';
+    const modal = this.root.querySelector('#modal');
+    const titleEl = this.root.querySelector('#modal-title');
+    const bodyEl = this.root.querySelector('#modal-body');
+    if (!modal || !titleEl || !bodyEl) return;
+    titleEl.textContent = title;
+    bodyEl.textContent = body;
+    modal.style.display = 'flex';
   }
 
   hideModal() {
-    document.getElementById('modal').style.display = 'none';
+    const modal = this.root.querySelector('#modal');
+    if (modal) modal.style.display = 'none';
   }
 
   openPause() {

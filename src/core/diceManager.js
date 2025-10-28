@@ -66,7 +66,7 @@ export class DiceManager {
       modal.style.zIndex = 9999;
       modal.innerHTML = `<div style="background:var(--fjord-light);padding:18px;border-radius:10px;min-width:260px;text-align:center;color:#e2e8f0">
             <div id="dice-modal-title" style="font-weight:800;margin-bottom:8px"></div>
-            <div id="dice-modal-body" style="font-size:20px;margin-bottom:12px">${messageBase}<span id="dice-count">…</span></div>
+            <div id="dice-modal-body" style="font-size:20px;margin-bottom:12px"></div>
             <button id="dice-modal-close" class="btn btn-primary">OK</button>
           </div>`;
       document.body.appendChild(modal);
@@ -79,13 +79,27 @@ export class DiceManager {
 
     modal.querySelector('#dice-modal-title').textContent = title;
     const body = modal.querySelector('#dice-modal-body');
-    const counterEl = modal.querySelector('#dice-count');
-    counterEl.textContent = '…';
-
-    if (!animate) {
-      const desc = ok === null ? '' : ok ? ' — Succès' : ' — Échec';
-      body.textContent = `${messageBase}${total}${desc}`;
+    if (!body) {
       return;
+    }
+
+    const descText = ok === null ? '' : ok ? ' — Succès' : ' — Échec';
+    body.innerHTML = `
+      <span class="dice-label">${messageBase}</span>
+      <span id="dice-count">${animate ? '…' : total}</span>
+      <span id="dice-desc">${animate ? '' : descText}</span>
+    `;
+
+    const counterEl = body.querySelector('#dice-count');
+    const descEl = body.querySelector('#dice-desc');
+    if (!animate) {
+      if (counterEl) counterEl.textContent = String(total);
+      if (descEl) descEl.textContent = descText;
+      return;
+    }
+
+    if (modal._diceInterval) {
+      clearInterval(modal._diceInterval);
     }
 
     const steps = Math.min(20, Math.max(6, Math.floor(faces / 2)));
@@ -94,15 +108,24 @@ export class DiceManager {
     const end = total;
     const delta = (end - start) / steps;
     const interval = 40;
-    const anim = setInterval(() => {
+
+    const finalize = () => {
+      if (counterEl) counterEl.textContent = String(total);
+      if (descEl) descEl.textContent = descText;
+      if (modal._diceInterval) {
+        clearInterval(modal._diceInterval);
+        modal._diceInterval = null;
+      }
+    };
+
+    modal._diceInterval = setInterval(() => {
       step += 1;
-      const val = Math.round(start + delta * step);
-      counterEl.textContent = String(val);
+      if (counterEl) {
+        const val = Math.round(start + delta * step);
+        counterEl.textContent = String(val);
+      }
       if (step >= steps) {
-        clearInterval(anim);
-        counterEl.textContent = String(total);
-        const desc = ok === null ? '' : ok ? ' — Succès' : ' — Échec';
-        body.textContent = `${messageBase}${total}${desc}`;
+        finalize();
       }
     }, interval);
   }
