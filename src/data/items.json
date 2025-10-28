@@ -1,5 +1,54 @@
 {
-  "biere":{"name":"Bière Fjord Sombre","desc":"Une bière...","icon":"🍺","image":"https://placehold.co/200x200/d97706/1a202c?text=Bière","type":"Consommable","usable":true,"action":"boireBiere"},
-  "duct_tape":{"name":"Tape Gris","desc":"Le Saint-Graal.","icon":"🩹","image":"https://placehold.co/200x200/9ca3af/1a202c?text=Tape","type":"Matériau","usable":false},
-  "chips":{"name":"Chips BBQ","desc":"Un sac de chips.","icon":"🥨","image":"https://placehold.co/200x200/c53030/1a202c?text=Chips","type":"Consommable","usable":true,"action":"mangerChips"}
+  "biere": {
+    "name": "Bière Fjord Sombre",
+    "desc": "Une bière artisanale brassée sur place. Elle réchauffe l’esprit mais trouble la lucidité.",
+    "icon": "🍺",
+    "image": "https://placehold.co/200x200/d97706/1a202c?text=Biere",
+    "type": "Consommable",
+    "usable": true,
+    "action": "boireBiere"
+  },
+  "duct_tape": {
+    "name": "Tape Gris",
+    "desc": "Le Saint-Graal du bricoleur de chalet. Inutile de tenter une réparation sans lui.",
+    "icon": "🩹",
+    "image": "https://placehold.co/200x200/9ca3af/1a202c?text=Tape",
+    "type": "Matériau",
+    "usable": false
+  },
+  "chips": {
+    "name": "Chips BBQ",
+    "desc": "Un sac croustillant qui ramène l’énergie et resserre les liens autour du feu.",
+    "icon": "🥨",
+    "image": "https://placehold.co/200x200/c53030/1a202c?text=Chips",
+    "type": "Consommable",
+    "usable": true,
+    "action": "mangerChips"
+  },
+  "thermos": {
+    "name": "Thermos d’Infusion Boréale",
+    "desc": "Un mélange de thé du labrador et de bleuet. Rend lucide sans casser le buzz.",
+    "icon": "🍵",
+    "image": "https://placehold.co/200x200/0ea5e9/082f49?text=Thermos",
+    "type": "Boisson chaude",
+    "usable": true,
+    "action": "utiliserThermos"
+  },
+  "sirop_erable": {
+    "name": "Sirop d’érable vieilli",
+    "desc": "Un sirop rare trouvé dans la cabane. Un filet suffit pour apaiser la gorge et l’esprit.",
+    "icon": "🍯",
+    "image": "https://placehold.co/200x200/f59e0b/1a202c?text=Sirop",
+    "type": "Consommable",
+    "usable": true,
+    "action": "degusterSirop"
+  },
+  "lampe_tempete": {
+    "name": "Lampe-tempête",
+    "desc": "Une lampe ancienne qui éclaire les sentiers sombres lorsque la brume tombe.",
+    "icon": "🪔",
+    "image": "https://placehold.co/200x200/475569/1a202c?text=Lampe",
+    "type": "Équipement",
+    "usable": false
+  }
 }
