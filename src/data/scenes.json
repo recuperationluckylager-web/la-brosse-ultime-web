@@ -1,0 +1,19 @@
+{
+  "start": {
+    "title":"Le Réveil Brumeux",
+    "location":"Chalet du Fjord",
+    "image":"https://placehold.co/800x400/2d3748/4a5568?text=Vue+du+Chalet",
+    "text":"Tu te réveilles sur le divan-lit. ...",
+    "choices":[
+      {"text":"Ouvrir une bière tablette.","target":"boire_biere_matin","action":"trouverBiere"},
+      {"text":"Prendre un café instant.","target":"cafe_matin"},
+      {"text":"Rejoindre Valette sur le patio.","target":"patio_valette"}
+    ]
+  },
+  "boire_biere_matin": {
+    "title":"Le Poil de la Bête",
+    "image":"https://placehold.co/800x400/d97706/4a5568?text=Bière+matinale",
+    "text":"La première gorgée...",
+    "choices":[{"text":"Aller la rejoindre.","target":"patio_valette"},{"text":"Réveiller Bebis.","target":"reveil_bebis"}]
+  }
+}

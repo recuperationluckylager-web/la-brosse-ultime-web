@@ -1,0 +1,5 @@
+{
+  "biere":{"name":"Bière Fjord Sombre","desc":"Une bière...","icon":"🍺","image":"https://placehold.co/200x200/d97706/1a202c?text=Bière","type":"Consommable","usable":true,"action":"boireBiere"},
+  "duct_tape":{"name":"Tape Gris","desc":"Le Saint-Graal.","icon":"🩹","image":"https://placehold.co/200x200/9ca3af/1a202c?text=Tape","type":"Matériau","usable":false},
+  "chips":{"name":"Chips BBQ","desc":"Un sac de chips.","icon":"🥨","image":"https://placehold.co/200x200/c53030/1a202c?text=Chips","type":"Consommable","usable":true,"action":"mangerChips"}
+}
