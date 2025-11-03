@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>La Brosse Ultime — Moteur v2.0</title>
+
+  <!-- Polices + Tailwind (config minimal via CDN) -->
+  <script>
+    tailwind = { config: { theme: { extend: { fontFamily: { sans:['Inter','sans-serif'], title:['Bangers','cursive'] }, colors: { 'fjord-dark':'#1a202c','fjord-light':'#2d3748','beer-gold':'#f59e0b' } } } } };
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- LE STYLE RESTE IDENTIQUE. Il est parfait. -->
+  <style>
+    :root{ --fjord-dark:#1a202c; --fjord-light:#2d3748; --beer-gold:#f59e0b;}
+    html,body{height:100%;margin:0}
+    body{background:var(--fjord-dark); color:#cbd5e0; font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased}
+    .font-title{font-family:'Bangers',cursive; letter-spacing:1px}
+    .game-page{display:none} .game-page.active{display:block}
+    .btn{display:inline-block;padding:.5rem .9rem;border-radius:.45rem;font-weight:700;cursor:pointer}
+    .btn-primary{background:var(--beer-gold);color:#111}
+    .btn-secondary{background:var(--fjord-light);color:#e2e8f0}
+    .btn-choice{display:block;width:100%;text-align:left;background:var(--fjord-light);color:#e2e8f0;margin-bottom:.5rem;padding:.6rem;border-radius:.5rem;border:0}
+    .map-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;aspect-ratio:1/1;max-width:520px;margin:auto;border:2px solid #4a5568;background:var(--fjord-light);padding:6px;transform-origin:center center}
+    .map-cell{background:#4a5568;opacity:.6;display:flex;align-items:center;justify:center;font-size:.75rem;color:#a0aec0;position:relative;min-height:28px;border-radius:6px}
+    .map-cell.discovered{opacity:1;color:white}
+    .map-cell.player-location::after{content:'YOU';position:absolute;font-size:.6rem;font-weight:700;color:var(--beer-gold);animation:pulse 1s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+    .inventory-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:12px}
+    .inventory-slot{background:var(--fjord-light);border:2px solid #4a5568;border-radius:10px;aspect-ratio:1/1;display:flex;align-items:center;justify:center;font-size:1.4rem;cursor:pointer;position:relative}
+    .item-qty{position:absolute;right:6px;bottom:6px;font-size:.75rem;color:#cbd5e0;font-weight:700}
+    #modal{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.6);align-items:center;justify-content:center}
+    #modal .card{background:var(--fjord-light);padding:18px;border-radius:10px;max-width:640px;width:100%}
+    /* Dice modal visuals */
+    #dice-modal{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.62);align-items:center;justify:content:center}
+    #dice-card{width:320px;max-width:90%;background:var(--fjord-light);padding:18px;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:12px;box-shadow:0 8px 30px rgba(0,0,0,.6)}
+    #dice-svg{transform-origin:center center;transition:transform .6s cubic-bezier(.2,.9,.2,1)}
+    #dice-overlay{position:absolute;inset:0;display:flex;align-items:center;justify:content:center;font-size:28px;font-weight:800;color:var(--beer-gold);text-shadow:0 4px 18px rgba(0,0,0,.6);opacity:0;transition:opacity .24s}
+    #dice-confetti{position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:10001;display:none}
+  </style>
+</head>
+<body class="h-full">
+
+  <!-- 
+    C'est la nouvelle racine de ton jeu. 
+    Le 'sceneRenderer.js' va construire l'interface ici-dedans.
+  -->
+  <div id="game-root" class="h-full">
+    <div style="padding:40px; text-align:center; font-size: 24px; color: var(--beer-gold);">
+      Chargement du Moteur de Génie...
+    </div>
+  </div>
+
+  <!-- 
+    LA MAGIE EST LÀ !
+    On ne charge plus que le 'main.js' comme module.
+    Il s'occupe de TOUT le reste.
+  -->
+  <script type="module" src="main.js"></script>
+
+</body>
+</html>

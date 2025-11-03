@@ -1,100 +1,175 @@
-// DiceManager autonome, testable, injectable RNG
-app.dice = {
-  rng: () => Math.random(),
+/**
+ * DiceManager v2.0 (Modulaire)
+ * Transformé en module ES6 exportable par MegaMind Genius
+ */
+
+// On expose un objet 'dice' unique qui contient toute la logique
+export const dice = {
   history: [],
+  // Permet au 'main.js' d'injecter le RNG (Random Number Generator)
+  _rng: () => Math.random(),
+  
   setRNG(fn) {
-    if (typeof fn === 'function') this.rng = fn;
-    else this.rng = () => Math.random();
+    if (typeof fn === 'function') this._rng = fn;
+    else this._rng = () => Math.random();
   },
 
-  // opts: { faces=20, mod=0, threshold=null, context='', animate=true }
-  roll(opts = {}) {
-    const { faces = 20, mod = 0, threshold = null, context = '', animate = true } = opts;
+  // Fonction pour les sons (Génie pur)
+  _playSound(success = true) {
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      const ctx = new Ctx();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = success ? 'sine' : 'triangle';
+      o.frequency.value = success ? 880 : 220;
+      g.gain.value = 0;
+      o.connect(g); g.connect(ctx.destination);
+      o.start();
+      g.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.01);
+      g.gain.linearRampToValueAtTime(0.0, ctx.currentTime + 0.22);
+      o.stop(ctx.currentTime + 0.25);
+    } catch (e) {}
+  },
+
+  // Fonction pour les confettis (LÉGENDAIRE)
+  _burstConfetti(x = window.innerWidth / 2, y = window.innerHeight / 2, count = 20) {
+    try {
+      const canvas = document.getElementById('dice-confetti');
+      if (!canvas) return; // S'assure que le canvas existe
+      const ctx = canvas.getContext('2d');
+      canvas.width = innerWidth; canvas.height = innerHeight; canvas.style.display = 'block';
+      const particles = [];
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x, y,
+          vx: (Math.random() - 0.5) * 8,
+          vy: (Math.random() * -6) - 2,
+          size: 6 + Math.random() * 8,
+          color: ['#f59e0b','#06b6d4','#84cc16','#f97316','#ef4444'][Math.floor(Math.random() * 5)],
+          life: 50 + Math.floor(Math.random() * 40)
+        });
+      }
+      let t = 0;
+      const anim = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let p of particles) {
+          p.vy += 0.25; p.x += p.vx; p.y += p.vy; p.life--;
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.x, p.y, p.size, p.size * 0.6);
+        }
+        t++;
+        for (let i = particles.length - 1; i >= 0; i--) if (particles[i].life <= 0) particles.splice(i, 1);
+        if (particles.length > 0 && t < 400) requestAnimationFrame(anim); else { ctx.clearRect(0,0,canvas.width,canvas.height); canvas.style.display = 'none'; }
+      };
+      anim();
+    } catch (e) {}
+  },
+
+  // Dessine les points sur le dé
+  _drawDots(n) {
+    const dots = document.getElementById('dice-dots');
+    if (!dots) return;
+    while (dots.firstChild) dots.removeChild(dots.firstChild);
+    const mk = (cx, cy) => {
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', String(cx)); c.setAttribute('cy', String(cy)); c.setAttribute('r', '4.5');
+      c.setAttribute('fill', '#f8fafc');
+      dots.appendChild(c);
+    };
+    const coords = {
+      1: [[50,50]],
+      2: [[30,30],[70,70]],
+      3: [[30,30],[50,50],[70,70]],
+      4: [[30,30],[30,70],[70,30],[70,70]],
+      5: [[30,30],[30,70],[70,30],[70,70],[50,50]],
+      6: [[30,22],[30,50],[30,78],[70,22],[70,50],[70,78]]
+    };
+    if (n >= 1 && n <= 6) coords[n].forEach(c => mk(c[0], c[1])); else {
+      const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x','50'); t.setAttribute('y','58'); t.setAttribute('text-anchor','middle'); t.setAttribute('font-size','36'); t.setAttribute('fill','#f8fafc'); t.setAttribute('font-weight','700');
+      t.textContent = String(n);
+      dots.appendChild(t);
+    }
+  },
+
+  // La fonction ROLL principale, maintenant une méthode de l'objet 'dice'
+  roll({ faces = 20, mod = 0, threshold = null, animate = true } = {}) {
+    const self = this; // 'this' fait référence à l'objet 'dice'
     return new Promise((resolve) => {
-      const raw = Math.floor(this.rng() * faces) + 1;
+      const raw = Math.floor(self._rng() * faces) + 1;
       const total = raw + (Number(mod) || 0);
       const ok = threshold === null ? null : (total >= threshold);
-      const result = { roll: raw, faces, mod, total, ok, context, ts: Date.now() };
-      this.history.push(result);
-      if (this.history.length > 200) this.history.shift();
+      const result = { roll: raw, faces, mod, total, ok, ts: Date.now() };
+      self.history.push(result); if (self.history.length > 300) self.history.shift();
 
-      // UI: modal with simple numeric animation (count-up)
-      const showAnimatedModal = () => {
-        const title = `Lancer D${faces}`;
-        const messageBase = `Résultat: `;
-        // Create minimal modal if not present
-        let modal = document.getElementById('dice-modal');
-        if (!modal) {
-          modal = document.createElement('div');
-          modal.id = 'dice-modal';
-          modal.style.position = 'fixed';
-          modal.style.inset = '0';
-          modal.style.display = 'flex';
-          modal.style.alignItems = 'center';
-          modal.style.justifyContent = 'center';
-          modal.style.background = 'rgba(0,0,0,0.6)';
-          modal.style.zIndex = 9999;
-          modal.innerHTML = `<div style="background:var(--fjord-light);padding:18px;border-radius:10px;min-width:260px;text-align:center;color:#e2e8f0">
-            <div id="dice-modal-title" style="font-weight:800;margin-bottom:8px">${title}</div>
-            <div id="dice-modal-body" style="font-size:20px;margin-bottom:12px">${messageBase}<span id="dice-count">…</span></div>
-            <button id="dice-modal-close" class="btn btn-primary">OK</button>
-          </div>`;
-          document.body.appendChild(modal);
-          modal.querySelector('#dice-modal-close').addEventListener('click', () => {
-            modal.style.display = 'none';
-          });
-        } else {
-          modal.style.display = 'flex';
-          modal.querySelector('#dice-modal-title').textContent = title;
+      // Logique pour le journal (sera gérée par le store via 'dispatch')
+      
+      // La logique d'animation de l'interface (UI)
+      try {
+        const modal = document.getElementById('dice-modal');
+        const svg = document.getElementById('dice-svg');
+        const overlay = document.getElementById('dice-overlay');
+        const countEl = document.getElementById('dice-count');
+        const titleEl = document.getElementById('dice-modal-title');
+
+        if (!modal || !svg || !countEl || !titleEl) { // Sécurité renforcée
+          console.warn("Éléments du modal de dés non trouvés.");
+          resolve(result); 
+          return; 
         }
 
-        const counterEl = modal.querySelector('#dice-count');
-        counterEl.textContent = '…';
-
-        if (!animate) {
-          counterEl.textContent = String(total);
-          const desc = ok === null ? '' : (ok ? ' — Succès' : ' — Échec');
-          modal.querySelector('#dice-modal-body').textContent = `${messageBase}${total}${desc}`;
-          return;
-        }
-
-        // animation: count up from 1 to total (fast)
-        const steps = Math.min(20, Math.max(6, Math.floor(faces / 2)));
+        titleEl.textContent = `Lancer D${faces}`;
+        overlay.style.opacity = '0';
+        countEl.textContent = '…';
+        const isD6 = faces === 6;
+        const steps = Math.min(12, Math.max(6, Math.floor(faces / 2)));
         let step = 0;
-        const start = 1;
-        const end = total;
-        const delta = (end - start) / steps;
-        const interval = 40;
-        const anim = setInterval(() => {
+
+        const frame = () => {
           step++;
-          const val = Math.round(start + delta * step);
-          counterEl.textContent = String(val);
-          if (step >= steps) {
-            clearInterval(anim);
-            counterEl.textContent = String(total);
-            const desc = ok === null ? '' : (ok ? ' — Succès' : ' — Échec');
-            modal.querySelector('#dice-modal-body').textContent = `${messageBase}${total}${desc}`;
+          const interm = Math.floor(self._rng() * Math.min(6, faces)) + 1;
+          if (isD6) self._drawDots(interm);
+          else {
+            // Logique pour D20, etc.
+            const dots = document.getElementById('dice-dots');
+            while (dots.firstChild) dots.removeChild(dots.firstChild);
+            const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+            t.setAttribute('x','50'); t.setAttribute('y','58'); t.setAttribute('text-anchor','middle'); t.setAttribute('font-size','28'); t.setAttribute('fill','#f8fafc');
+            t.textContent = String(interm);
+            dots.appendChild(t);
           }
-        }, interval);
-      };
+          if (step < steps) setTimeout(frame, 40 + Math.random()*30);
+          else {
+            // Affiche le résultat final
+            if (isD6 && raw <= 6) self._drawDots(raw);
+            else {
+              const dots = document.getElementById('dice-dots');
+              while (dots.firstChild) dots.removeChild(dots.firstChild);
+              const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+              t.setAttribute('x','50'); t.setAttribute('y','58'); t.setAttribute('text-anchor','middle'); t.setAttribute('font-size','36'); t.setAttribute('fill','#f8fafc'); t.setAttribute('font-weight','700');
+              t.textContent = String(total);
+              dots.appendChild(t);
+            }
+            svg.style.transform = 'rotate(0deg) scale(1)';
+            overlay.textContent = total;
+            overlay.style.opacity = '1';
+            countEl.textContent = String(total) + (ok === null ? '' : (ok ? ' ✓' : ' ✕'));
+            if (ok === true) { self._burstConfetti(window.innerWidth/2, window.innerHeight/2); self._playSound(true); }
+            else if (ok === false) { self._playSound(false); }
+          }
+        };
 
-      // Always add an entry to journal if app.addLog exists
-      if (typeof app.addLog === 'function') {
-        if (ok === null) app.addLog(`Lancer D${faces} => ${total}`);
-        else app.addLog(`Test D${faces} (${threshold}) => ${total} (${ok ? 'OK' : 'KO'})`);
+        modal.style.display = 'flex';
+        svg.style.transform = 'rotate(720deg) scale(.96)';
+        setTimeout(() => frame(), 80);
+      } catch (e) {
+        console.error('Erreur UI du dé', e);
       }
 
-      // show modal then resolve
-      if (typeof document !== 'undefined') {
-        try {
-          showAnimatedModal();
-        } catch (e) {
-          // ignore UI errors
-        }
-      }
-
-      // small delay to let animation start
-      setTimeout(() => resolve(result), 120);
+      // Résout la promesse (le 'await' dans main.js sera libéré)
+      setTimeout(() => resolve(result), 180);
     });
   }
 };
