@@ -23,6 +23,14 @@ export class Persistence {
       return false;
     }
   }
+  hasSave() {
+    try {
+      return Boolean(localStorage.getItem(this.key));
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  }
   clear() {
     try {
       localStorage.removeItem(this.key);

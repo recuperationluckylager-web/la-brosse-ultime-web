@@ -53,12 +53,11 @@ async function startLegendaryGame() {
 
   // 5. Initialiser la Persistance (Sauvegarde/Chargement)
   const persistence = new Persistence(store, 'brosseUltimeSave_v2'); // Clé v2 !
-
-  // Essaye de charger une sauvegarde
-  if (persistence.load()) {
-    console.log('Partie sauvegardée chargée !');
+  const hasSave = typeof persistence.hasSave === 'function' && persistence.hasSave();
+  if (hasSave) {
+    console.log('Sauvegarde détectée. Invitation à reprendre ou redémarrer.');
   } else {
-    console.log("Aucune sauvegarde trouvée, démarrage d'une nouvelle partie.");
+    console.log("Aucune sauvegarde trouvée, l'aventure commencera fraîchement.");
   }
 
   // Sauvegarde automatique à chaque changement
@@ -73,7 +72,7 @@ async function startLegendaryGame() {
     document.getElementById('game-root'), // On cible un conteneur
     store,
     assets,
-    { persistence },
+    { persistence, hasSave },
   );
 
   // 7. DÉMARRAGE !

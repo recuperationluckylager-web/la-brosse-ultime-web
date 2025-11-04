@@ -7,6 +7,9 @@ export class SceneRenderer {
     this.unsubscribe = null;
     this.currentSceneId = null;
     this.pauseOverlay = null;
+    this.startOverlay = null;
+    this.startContinueButton = null;
+    this.hasExistingSave = Boolean(options.hasSave);
   }
   start() {
     this.buildShell();
@@ -68,18 +71,44 @@ export class SceneRenderer {
           </div>
         </div>
       </div>
+      <div id="start-overlay" class="start-overlay active" aria-hidden="false">
+        <div class="start-card" role="dialog" aria-modal="true" aria-labelledby="start-title">
+          <h1 id="start-title" class="font-title text-4xl text-white mb-4 text-center">Chroniques de Lysandre</h1>
+          <p class="text-gray-300 mb-6 text-center">Choisis comment entamer la légende.</p>
+          <div class="space-y-3">
+            <button id="start-new" class="btn btn-primary w-full">Commencer une nouvelle aventure</button>
+            <button
+              id="start-continue"
+              class="btn btn-secondary w-full"
+              ${this.hasExistingSave ? '' : 'disabled aria-disabled="true" data-disabled="true"'}
+            >Continuer l'expédition</button>
+          </div>
+          <p class="text-xs text-gray-500 mt-6 text-center">Illustrations issues de bibliothèques libres (Unsplash, Pexels, Pixabay).</p>
+        </div>
+      </div>
     `;
     this.bindUI();
   }
   bindUI() {
     this.root.querySelector('#modal-close').addEventListener('click', () => this.hideModal());
     this.pauseOverlay = this.root.querySelector('#pause-overlay');
+    this.startOverlay = this.root.querySelector('#start-overlay');
     const pauseButton = this.root.querySelector('#open-pause');
     const resumeButton = this.root.querySelector('#pause-resume');
     const restartButton = this.root.querySelector('#pause-restart');
+    const startNewButton = this.root.querySelector('#start-new');
+    const startContinueButton = this.root.querySelector('#start-continue');
+    this.startContinueButton = startContinueButton;
     if (pauseButton) pauseButton.addEventListener('click', () => this.showPause());
     if (resumeButton) resumeButton.addEventListener('click', () => this.hidePause());
     if (restartButton) restartButton.addEventListener('click', () => this.handleRestart());
+    if (startNewButton) startNewButton.addEventListener('click', () => this.handleStartNew());
+    if (startContinueButton)
+      startContinueButton.addEventListener('click', () => this.handleStartContinue(startContinueButton));
+    if (this.startOverlay) {
+      const initialFocus = startNewButton || startContinueButton;
+      if (initialFocus) initialFocus.focus();
+    }
     if (this.pauseOverlay) {
       this.pauseOverlay.addEventListener('click', (event) => {
         if (event.target === this.pauseOverlay) this.hidePause();
@@ -251,13 +280,55 @@ export class SceneRenderer {
     const trigger = this.root.querySelector('#open-pause');
     if (trigger) trigger.focus();
   }
+  hideStartOverlay() {
+    if (!this.startOverlay) return;
+    this.startOverlay.classList.remove('active');
+    this.startOverlay.setAttribute('aria-hidden', 'true');
+    const firstChoice = this.root.querySelector('#choices-container button');
+    if (firstChoice) {
+      firstChoice.focus();
+      return;
+    }
+    const pauseTrigger = this.root.querySelector('#open-pause');
+    if (pauseTrigger) pauseTrigger.focus();
+  }
+  handleStartNew() {
+    if (this.persistence) {
+      this.persistence.clear();
+    }
+    this.hasExistingSave = true;
+    this.enableContinueButton();
+    this.store.reset();
+    this.hideStartOverlay();
+  }
+  handleStartContinue(button) {
+    if (!this.persistence || (button && button.hasAttribute('disabled'))) {
+      this.handleStartNew();
+      return;
+    }
+    const loaded = this.persistence.load();
+    if (!loaded) {
+      this.handleStartNew();
+      return;
+    }
+    this.hasExistingSave = true;
+    this.enableContinueButton();
+    this.hideStartOverlay();
+  }
   handleRestart() {
     if (this.persistence) {
       this.persistence.clear();
     }
     this.currentSceneId = null;
     this.store.reset();
+    this.hasExistingSave = true;
     this.hidePause();
+  }
+  enableContinueButton() {
+    if (!this.startContinueButton) return;
+    this.startContinueButton.removeAttribute('disabled');
+    this.startContinueButton.removeAttribute('aria-disabled');
+    this.startContinueButton.removeAttribute('data-disabled');
   }
   resolveImage(scene) {
     const gallery = (this.assets && this.assets.gallery) || {};
