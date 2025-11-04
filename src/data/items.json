@@ -1,5 +1,52 @@
 {
-  "biere":{"name":"Bière Fjord Sombre","desc":"Une bière...","icon":"🍺","image":"https://placehold.co/200x200/d97706/1a202c?text=Bière","type":"Consommable","usable":true,"action":"boireBiere"},
-  "duct_tape":{"name":"Tape Gris","desc":"Le Saint-Graal.","icon":"🩹","image":"https://placehold.co/200x200/9ca3af/1a202c?text=Tape","type":"Matériau","usable":false},
-  "chips":{"name":"Chips BBQ","desc":"Un sac de chips.","icon":"🥨","image":"https://placehold.co/200x200/c53030/1a202c?text=Chips","type":"Consommable","usable":true,"action":"mangerChips"}
+  "carte_royaume": {
+    "name": "Carte de Lysandre",
+    "desc": "Un parchemin annoté indiquant la forêt de la Lueur.",
+    "icon": "🗺️",
+    "image": "https://images.unsplash.com/photo-1529927066849-66b121f0dcaa?auto=format&fit=crop&w=400&q=80",
+    "type": "Objet de quête",
+    "usable": false
+  },
+  "potion_etoilee": {
+    "name": "Potion étoilée",
+    "desc": "Un élixir à boire avant les grandes batailles. Rend vitalité et lucidité.",
+    "icon": "🧪",
+    "image": "https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=400&q=80",
+    "type": "Consommable",
+    "usable": true,
+    "action": "boirePotion"
+  },
+  "lame_argent": {
+    "name": "Lame d'argent",
+    "desc": "Une épée forgée pour transpercer les ombres.",
+    "icon": "🗡️",
+    "image": "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=400&q=80",
+    "type": "Arme",
+    "usable": false
+  },
+  "amulette_oracle": {
+    "name": "Amulette de l'oracle",
+    "desc": "Un talisman vibrant lorsqu'un danger approche.",
+    "icon": "🪬",
+    "image": "https://images.unsplash.com/photo-1518544801976-3e1594f58cd2?auto=format&fit=crop&w=400&q=80",
+    "type": "Talisman",
+    "usable": false
+  },
+  "herbes_lumineuses": {
+    "name": "Herbes lumineuses",
+    "desc": "Des plantes rares qui soignent les blessures.",
+    "icon": "🌿",
+    "image": "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=400&q=80",
+    "type": "Consommable",
+    "usable": true,
+    "action": "utiliserHerbes"
+  },
+  "relique_aube": {
+    "name": "Relique de l'aube",
+    "desc": "Symbole de la victoire sur les ténèbres, scintillant d'un éclat doré.",
+    "icon": "🔆",
+    "image": "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=400&q=80",
+    "type": "Relique",
+    "usable": false
+  }
 }
