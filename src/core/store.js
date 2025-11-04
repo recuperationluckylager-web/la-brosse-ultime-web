@@ -1,18 +1,44 @@
 export class Store {
-  constructor(initial) { this.state = initial || {}; this.listeners = []; this.actions = {}; }
-  getState() { return structuredClone(this.state); }
-  subscribe(fn) { this.listeners.push(fn); return () => { this.listeners = this.listeners.filter(s=>s!==fn); }; }
+  constructor(initial) {
+    this.initialState = structuredClone(initial || {});
+    this.state = structuredClone(this.initialState);
+    this.listeners = [];
+    this.actions = {};
+  }
+  getState() {
+    return structuredClone(this.state);
+  }
+  subscribe(fn) {
+    this.listeners.push(fn);
+    return () => {
+      this.listeners = this.listeners.filter((subscriber) => subscriber !== fn);
+    };
+  }
   commit(patch) {
     this.state = deepMerge(this.state, patch);
-    this.listeners.forEach(l=>l(this.getState(), patch));
+    this.emit(patch);
   }
-  registerActions(actionSet) { this.actions = Object.assign({}, this.actions, actionSet); }
+  reset(nextInitial) {
+    if (nextInitial) {
+      this.initialState = structuredClone(nextInitial);
+    }
+    this.state = structuredClone(this.initialState);
+    this.emit({ reset: true });
+  }
+  emit(detail) {
+    this.listeners.forEach((listener) => listener(this.getState(), detail));
+  }
+  registerActions(actionSet) {
+    this.actions = Object.assign({}, this.actions, actionSet);
+  }
   dispatch(actionName, payload) {
     const fn = this.actions[actionName];
-    if (!fn) throw new Error('Action inconnue '+actionName);
+    if (!fn) throw new Error('Action inconnue ' + actionName);
     const patch = fn(this.getState(), payload) || {};
     if (patch.state) this.commit(patch.state);
-    if (patch.log) { this.commit({ journal: [...(this.state.journal||[]), patch.log] }); }
+    if (patch.log) {
+      this.commit({ journal: [...(this.state.journal || []), patch.log] });
+    }
     return patch;
   }
 }

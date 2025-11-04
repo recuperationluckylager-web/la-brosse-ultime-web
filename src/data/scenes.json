@@ -1,19 +1,392 @@
 {
   "start": {
-    "title":"Le Réveil Brumeux",
-    "location":"Chalet du Fjord",
-    "image":"https://placehold.co/800x400/2d3748/4a5568?text=Vue+du+Chalet",
-    "text":"Tu te réveilles sur le divan-lit. ...",
-    "choices":[
-      {"text":"Ouvrir une bière tablette.","target":"boire_biere_matin","action":"trouverBiere"},
-      {"text":"Prendre un café instant.","target":"cafe_matin"},
-      {"text":"Rejoindre Valette sur le patio.","target":"patio_valette"}
+    "title": "Le Chant des Tours",
+    "location": "Remparts de Lysandre",
+    "imageKey": "lysandre_remparts",
+    "imageAlt": "Remparts baignés de lumière dorée",
+    "text": "<p>Le soleil se lève sur les tours blanches de Lysandre. Des corneilles tournent dans le ciel tandis que la rumeur d'une ombre grandissante parcourt la cité.</p><p>Vous êtes l'Émissaire de l'Aube, appelé·e à défendre le royaume contre l'Obscurité qui rôde dans la forêt voisine.</p>",
+    "choices": [
+      {
+        "text": "Descendre vers la place du Soleil.",
+        "target": "place_centrale"
+      },
+      {
+        "text": "Se recueillir devant l'autel ancestral.",
+        "target": "autel_ancien",
+        "action": "mediterAutel"
+      }
     ]
   },
-  "boire_biere_matin": {
-    "title":"Le Poil de la Bête",
-    "image":"https://placehold.co/800x400/d97706/4a5568?text=Bière+matinale",
-    "text":"La première gorgée...",
-    "choices":[{"text":"Aller la rejoindre.","target":"patio_valette"},{"text":"Réveiller Bebis.","target":"reveil_bebis"}]
+  "autel_ancien": {
+    "title": "Murmure de l'Autel",
+    "location": "Autel du Premier Feu",
+    "imageKey": "autel_premier_feu",
+    "imageAlt": "Autel de pierre entouré de bougies",
+    "text": "<p>Les flammes vacillent et dessinent des runes anciennes. Une chaleur apaisante vous entoure et vos pensées s'ordonnent.</p>",
+    "choices": [
+      {
+        "text": "Regagner la place du Soleil, l'esprit clair.",
+        "target": "place_centrale"
+      }
+    ]
+  },
+  "place_centrale": {
+    "title": "La Place du Soleil",
+    "location": "Cœur de Lysandre",
+    "imageKey": "place_du_soleil",
+    "imageAlt": "Place pavée animée",
+    "text": "<p>Artisans, gardes et ménestrels se croisent au pied de l'obélisque solaire. Les regards se tournent vers vous avec espoir.</p>",
+    "choices": [
+      {
+        "text": "Rejoindre la caserne et le capitaine Elian.",
+        "target": "caserne"
+      },
+      {
+        "text": "Explorer le marché nocturne.",
+        "target": "marche_enchante"
+      },
+      {
+        "text": "S'engouffrer sous la tente de l'oracle.",
+        "target": "oracle_tente"
+      },
+      {
+        "text": "Quitter la ville vers la forêt de la Lueur.",
+        "target": "depart_foret",
+        "condition": "briefingRecu"
+      },
+      {
+        "text": "Gravir à nouveau les remparts pour prendre de la hauteur.",
+        "target": "start"
+      }
+    ]
+  },
+  "caserne": {
+    "title": "Briefing du Capitaine",
+    "location": "Caserne de Lysandre",
+    "imageKey": "caserne_lysandre",
+    "imageAlt": "Salle d'armes éclairée",
+    "entryActions": [
+      "recevoirBriefing"
+    ],
+    "text": "<p>Le capitaine Elian déplie une carte tachée d'encre. &laquo; La forêt de la Lueur est gagnée par l'ombre. Vous seul·e pouvez éteindre la menace. &raquo;</p>",
+    "choices": [
+      {
+        "text": "Promettre de protéger Lysandre et retourner sur la place.",
+        "target": "place_centrale"
+      },
+      {
+        "text": "Étudier la carte stratégique.",
+        "target": "plan_de_route"
+      }
+    ]
+  },
+  "plan_de_route": {
+    "title": "Routes de la Lueur",
+    "location": "Salle des Cartes",
+    "imageKey": "salle_des_cartes",
+    "imageAlt": "Carte antique éclairée par une lanterne",
+    "text": "<p>Les trajectoires possibles serpentent entre les racines gigantesques et les marais. Les annotations du capitaine mettent en garde contre un pont chancelant.</p>",
+    "choices": [
+      {
+        "text": "Mémoriser l'itinéraire et revenir sur la place.",
+        "target": "place_centrale"
+      }
+    ]
+  },
+  "marche_enchante": {
+    "title": "Marché Enchanté",
+    "location": "Quartier des Artisans",
+    "imageKey": "marche_enchante",
+    "imageAlt": "Étal illuminé par des lanternes",
+    "text": "<p>Les parfums de cannelle et d'huile d'armure se mêlent. Une alchimiste vous fait signe tandis qu'un forgeron polit une lame scintillante.</p>",
+    "choices": [
+      {
+        "text": "Acheter une potion étoilée.",
+        "target": "place_centrale",
+        "action": "acheterPotion"
+      },
+      {
+        "text": "Marchander une lame d'argent bénie.",
+        "dice": {
+          "faces": 20,
+          "threshold": 12,
+          "onSuccess": "lame_obtenue",
+          "onFailure": "marchand_mecontent"
+        }
+      },
+      {
+        "text": "Retourner sur la place du Soleil.",
+        "target": "place_centrale"
+      }
+    ]
+  },
+  "lame_obtenue": {
+    "title": "Lame Accordée",
+    "location": "Forge de Lysandre",
+    "imageKey": "forge_argentee",
+    "imageAlt": "Forgeron présentant une épée",
+    "entryActions": [
+      "obtenirLameArgent"
+    ],
+    "text": "<p>Le forgeron hoche la tête, impressionné par votre détermination. La lame brille d'un éclat lunaire en frôlant votre armure.</p>",
+    "choices": [
+      {
+        "text": "Remercier le forgeron et revenir sur la place.",
+        "target": "place_centrale"
+      }
+    ]
+  },
+  "marchand_mecontent": {
+    "title": "Marchand Outré",
+    "location": "Forge de Lysandre",
+    "imageKey": "forge_colere",
+    "imageAlt": "Marchand en colère",
+    "entryActions": [
+      "froisserMarchand"
+    ],
+    "text": "<p>Le forgeron croise les bras et refuse votre offre. Les badauds murmurent, déçus de votre audace.</p>",
+    "choices": [
+      {
+        "text": "Battre en retraite vers la place, penaud·e.",
+        "target": "place_centrale"
+      }
+    ]
+  },
+  "oracle_tente": {
+    "title": "Vision de l'Aube",
+    "location": "Tente de l'Oracle",
+    "imageKey": "tente_oracle",
+    "imageAlt": "Oracle entourée de voiles colorés",
+    "entryActions": [
+      "recevoirProphetie"
+    ],
+    "text": "<p>Des fils de lumière se tissent autour de vous. L'oracle décrit une silhouette de cendre blottie dans une grotte au cœur de la forêt.</p>",
+    "choices": [
+      {
+        "text": "Quitter la tente, le cœur troublé.",
+        "target": "place_centrale"
+      },
+      {
+        "text": "Ancrer la vision dans l'instant présent.",
+        "target": "place_centrale",
+        "action": "bannirVision"
+      }
+    ]
+  },
+  "depart_foret": {
+    "title": "Seuil des Racines",
+    "location": "Portail de la forêt de la Lueur",
+    "imageKey": "portail_foret",
+    "imageAlt": "Chemin forestier à l'aube",
+    "text": "<p>La porte de bois s'ouvre sur une mer de brume dorée. L'air est chargé d'électricité. Le chemin de l'Émissaire commence véritablement ici.</p>",
+    "choices": [
+      {
+        "text": "Franchir le pont chancelant.",
+        "target": "pont_chancelant"
+      },
+      {
+        "text": "Suivre le sentier noyé de brume.",
+        "target": "sentier_brouillard"
+      },
+      {
+        "text": "Revenir à Lysandre pour se préparer davantage.",
+        "target": "place_centrale"
+      }
+    ]
+  },
+  "pont_chancelant": {
+    "title": "Pont des Racines",
+    "location": "Gouffre des Murmures",
+    "imageKey": "pont_chancelant",
+    "imageAlt": "Pont suspendu dans la brume",
+    "text": "<p>Chaque planche gémit sous vos pas. Le gouffre avale la lumière et seule votre détermination vous guide.</p>",
+    "choices": [
+      {
+        "text": "Avancer avec assurance malgré le vertige.",
+        "dice": {
+          "faces": 20,
+          "threshold": 10,
+          "onSuccess": "clairiere",
+          "onFailure": "ravin"
+        }
+      }
+    ]
+  },
+  "ravin": {
+    "title": "Chute et Résilience",
+    "location": "Fond du ravin",
+    "imageKey": "ravin_brumeux",
+    "imageAlt": "Ravin envahi de brume",
+    "entryActions": [
+      "subirBlessure"
+    ],
+    "text": "<p>Vous glissez et tombez dans un amas de fougères. La douleur pulse, mais la lumière filtre encore entre les branches.</p>",
+    "choices": [
+      {
+        "text": "Ramper jusqu'au sentier noyé de brume.",
+        "target": "sentier_brouillard"
+      },
+      {
+        "text": "Panser vos plaies avec des herbes lumineuses.",
+        "target": "ravin",
+        "action": "utiliserHerbes",
+        "condition": "aHerbes"
+      }
+    ]
+  },
+  "sentier_brouillard": {
+    "title": "Sentier de Brume",
+    "location": "Forêt de la Lueur",
+    "imageKey": "sentier_brouillard",
+    "imageAlt": "Sentier forestier brumeux",
+    "entryActions": [
+      "calmerEsprit"
+    ],
+    "text": "<p>Les arbres chantent doucement. Des lucioles dessinent un chemin mouvant entre les troncs.</p>",
+    "choices": [
+      {
+        "text": "Suivre la lumière vers la clairière.",
+        "target": "clairiere"
+      },
+      {
+        "text": "Cueillir des herbes lumineuses.",
+        "target": "sentier_brouillard",
+        "action": "cueillirHerbes"
+      },
+      {
+        "text": "Revenir vers le pont des racines.",
+        "target": "pont_chancelant"
+      }
+    ]
+  },
+  "clairiere": {
+    "title": "Clairière du Cœur-d'Aube",
+    "location": "Forêt de la Lueur",
+    "imageKey": "clairiere_lueur",
+    "imageAlt": "Clairière baignée de lumière",
+    "entryActions": [
+      "releverDefi"
+    ],
+    "text": "<p>Un puits de lumière éclaire un cercle de pierres runiques. Au loin, l'entrée d'une grotte respire une brume glacée.</p>",
+    "choices": [
+      {
+        "text": "Cueillir des herbes scintillantes.",
+        "target": "clairiere",
+        "action": "cueillirHerbes"
+      },
+      {
+        "text": "Avancer vers la grotte à l'est.",
+        "target": "grotte_entree"
+      },
+      {
+        "text": "Retourner sur le sentier noyé de brume.",
+        "target": "sentier_brouillard"
+      }
+    ]
+  },
+  "grotte_entree": {
+    "title": "Souffle de la Grotte",
+    "location": "Entrée du sanctuaire",
+    "imageKey": "grotte_cristal",
+    "imageAlt": "Entrée de grotte mystérieuse",
+    "text": "<p>Un vent froid vous accueille. Des symboles brûlent faiblement sur les parois. L'ombre que vous traquez n'est plus qu'à quelques pas.</p>",
+    "choices": [
+      {
+        "text": "Boire la potion étoilée.",
+        "target": "grotte_entree",
+        "action": "boirePotion",
+        "condition": "aPotion"
+      },
+      {
+        "text": "Serrer la lame d'argent et avancer.",
+        "target": "combat_ombre",
+        "condition": "aLameArgent"
+      },
+      {
+        "text": "Entrer malgré l'absence d'arme bénie.",
+        "target": "combat_ombre"
+      },
+      {
+        "text": "Revenir à la clairière pour réfléchir.",
+        "target": "clairiere"
+      }
+    ]
+  },
+  "combat_ombre": {
+    "title": "Face à l'Ombre",
+    "location": "Sanctuaire obscur",
+    "imageKey": "combat_ombre",
+    "imageAlt": "Silhouette sombre dans une grotte",
+    "text": "<p>Une silhouette de cendres se détache des ténèbres. Ses yeux braisent d'une lueur cramoisie alors qu'elle fond sur vous.</p>",
+    "choices": [
+      {
+        "text": "Déchaîner toute votre lumière.",
+        "dice": {
+          "faces": 20,
+          "threshold": 13,
+          "onSuccess": "victoire",
+          "onFailure": "defaite"
+        }
+      }
+    ]
+  },
+  "victoire": {
+    "title": "Lueur Triomphante",
+    "location": "Sanctuaire baigné de lumière",
+    "imageKey": "relique_aube",
+    "imageAlt": "Salle illuminée par la lumière du soleil",
+    "entryActions": [
+      "triompheOmbre"
+    ],
+    "text": "<p>L'ombre se dissipe en un souffle glacé. Une relique dorée lévite au-dessus du sol, pulsant au rythme de votre cœur.</p>",
+    "choices": [
+      {
+        "text": "Retourner à Lysandre annoncer la victoire.",
+        "target": "epilogue"
+      },
+      {
+        "text": "Rester un moment à méditer auprès de la relique.",
+        "target": "sentier_brouillard"
+      }
+    ]
+  },
+  "defaite": {
+    "title": "Marques d'Ombre",
+    "location": "Sanctuaire obscur",
+    "imageKey": "sanctuaire_ombre",
+    "imageAlt": "Grotte plongée dans la pénombre",
+    "entryActions": [
+      "subirBlessureGrave"
+    ],
+    "text": "<p>L'ombre repousse votre assaut. Votre armure cède sous ses griffes, mais la flamme en vous refuse de s'éteindre.</p>",
+    "choices": [
+      {
+        "text": "Reculer pour panser vos plaies.",
+        "target": "sentier_brouillard"
+      },
+      {
+        "text": "Tenter une nouvelle charge.",
+        "target": "combat_ombre"
+      },
+      {
+        "text": "Utiliser des herbes lumineuses.",
+        "target": "defaite",
+        "action": "utiliserHerbes",
+        "condition": "aHerbes"
+      }
+    ]
+  },
+  "epilogue": {
+    "title": "Retour en Héros",
+    "location": "Place du Soleil",
+    "imageKey": "foule_celebration",
+    "imageAlt": "Foule en liesse",
+    "text": "<p>La cité acclame votre retour. Les cloches de Lysandre résonnent tandis que l'obélisque reflète la lumière nouvelle que vous rapportez.</p><p>Votre nom sera chanté tant que l'aube se lèvera.</p>",
+    "choices": [
+      {
+        "text": "Revivre l'aventure depuis les remparts.",
+        "target": "start"
+      }
+    ]
   }
 }

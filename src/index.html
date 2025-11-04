@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>La Brosse Ultime — Moteur v2.0</title>
+  <title>Chroniques de Lysandre — RPG narratif</title>
 
   <!-- Polices + Tailwind (config minimal via CDN) -->
   <script>
@@ -39,6 +39,10 @@
     #dice-svg{transform-origin:center center;transition:transform .6s cubic-bezier(.2,.9,.2,1)}
     #dice-overlay{position:absolute;inset:0;display:flex;align-items:center;justify:content:center;font-size:28px;font-weight:800;color:var(--beer-gold);text-shadow:0 4px 18px rgba(0,0,0,.6);opacity:0;transition:opacity .24s}
     #dice-confetti{position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:10001;display:none}
+    .pause-overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.75);z-index:1100;padding:16px}
+    .pause-overlay.active{display:flex}
+    .pause-card{background:var(--fjord-light);padding:24px;border-radius:14px;max-width:420px;width:100%;box-shadow:0 20px 40px rgba(0,0,0,.45)}
+    #scene-credit a{color:var(--beer-gold)}
   </style>
 </head>
 <body class="h-full">
