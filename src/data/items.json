@@ -1,52 +1,52 @@
 {
-  "carte_royaume": {
-    "name": "Carte de Lysandre",
-    "desc": "Un parchemin annoté indiquant la forêt de la Lueur.",
-    "icon": "🗺️",
-    "image": "https://images.unsplash.com/photo-1529927066849-66b121f0dcaa?auto=format&fit=crop&w=400&q=80",
+  "biere": {
+    "name": "Caisse de Boréale",
+    "desc": "Douze canettes froides qui goûtent la victoire du nord.",
+    "icon": "🍺",
+    "image": "https://images.unsplash.com/photo-1502462041640-b3d7e50d0660?auto=format&fit=crop&w=400&q=80",
+    "type": "Consommable",
+    "usable": true,
+    "action": "boireBiere"
+  },
+  "poutine": {
+    "name": "Poutine extra sauce",
+    "desc": "Frites croustillantes, fromage qui file pis sauce brune à flot.",
+    "icon": "🍟",
+    "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=400&q=80",
+    "type": "Consommable",
+    "usable": true,
+    "action": "mangerPoutine"
+  },
+  "duct_tape": {
+    "name": "Rouleau de duct tape",
+    "desc": "L'outil officiel du bricoleur de ruelle.",
+    "icon": "🩹",
+    "image": "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=400&q=80",
+    "type": "Matériel",
+    "usable": false
+  },
+  "billet_metro": {
+    "name": "Billet de métro",
+    "desc": "Titre de transport pour filer vers le centre-ville.",
+    "icon": "🎫",
+    "image": "https://images.unsplash.com/photo-1518281361980-b26bfd556770?auto=format&fit=crop&w=400&q=80",
     "type": "Objet de quête",
     "usable": false
   },
-  "potion_etoilee": {
-    "name": "Potion étoilée",
-    "desc": "Un élixir à boire avant les grandes batailles. Rend vitalité et lucidité.",
-    "icon": "🧪",
-    "image": "https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=400&q=80",
-    "type": "Consommable",
-    "usable": true,
-    "action": "boirePotion"
-  },
-  "lame_argent": {
-    "name": "Lame d'argent",
-    "desc": "Une épée forgée pour transpercer les ombres.",
-    "icon": "🗡️",
-    "image": "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=400&q=80",
-    "type": "Arme",
+  "casque_hockey": {
+    "name": "Casque bricolé",
+    "desc": "Patchwork de pads pis de duct tape. Pas beau, mais solide.",
+    "icon": "🥅",
+    "image": "https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&w=400&q=80",
+    "type": "Équipement",
     "usable": false
   },
-  "amulette_oracle": {
-    "name": "Amulette de l'oracle",
-    "desc": "Un talisman vibrant lorsqu'un danger approche.",
-    "icon": "🪬",
-    "image": "https://images.unsplash.com/photo-1518544801976-3e1594f58cd2?auto=format&fit=crop&w=400&q=80",
-    "type": "Talisman",
-    "usable": false
-  },
-  "herbes_lumineuses": {
-    "name": "Herbes lumineuses",
-    "desc": "Des plantes rares qui soignent les blessures.",
-    "icon": "🌿",
-    "image": "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=400&q=80",
-    "type": "Consommable",
-    "usable": true,
-    "action": "utiliserHerbes"
-  },
-  "relique_aube": {
-    "name": "Relique de l'aube",
-    "desc": "Symbole de la victoire sur les ténèbres, scintillant d'un éclat doré.",
-    "icon": "🔆",
-    "image": "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=400&q=80",
-    "type": "Relique",
+  "trophee_brosse": {
+    "name": "Trophée de la brosse ultime",
+    "desc": "Une coupe en or cheap avec ton nom gravé au Dremel.",
+    "icon": "🏆",
+    "image": "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=400&q=80",
+    "type": "Souvenir",
     "usable": false
   }
 }

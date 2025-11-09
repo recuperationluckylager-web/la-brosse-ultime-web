@@ -1,232 +1,128 @@
 {
   "start": {
-    "title": "Le Chant des Tours",
-    "location": "Remparts de Lysandre",
-    "image": "https://images.unsplash.com/photo-1520256862855-398228c41684?auto=format&fit=crop&w=1200&q=80",
-    "imageAlt": "Remparts baignés de lumière dorée",
-    "text": "<p>Le soleil se lève sur les tours blanches de Lysandre. Des corneilles tournent dans le ciel tandis que la rumeur d'une ombre grandissante parcourt la cité.</p><p>Vous êtes l'Émissaire de l'Aube, appelé·e à défendre le royaume contre l'Obscurité qui rôde dans la forêt voisine.</p>",
+    "title": "La Brosse Ultime",
+    "location": "Chalet du Fjord",
+    "image": "https://images.unsplash.com/photo-1525182008055-f88b95ff7980?auto=format&fit=crop&w=1200&q=80",
+    "imageAlt": "Un sous-sol chaleureux rempli de lumières de fête",
+    "text": "<p>Le chalet du cousin Dany grouille déjà. Les canettes cliquent, la neige fond sur les bottes pis la playlist de Offenbach roule en boucle.</p><p>Faut que tu rassembles le kit parfait pour impressionner toute la gang au bar La Pogne.</p>",
     "choices": [
-      { "text": "Descendre vers la place du Soleil.", "target": "place_centrale" },
-      { "text": "Se recueillir devant l'autel ancestral.", "target": "autel_ancien", "action": "mediterAutel" }
+      { "text": "Descendre une Boréale tout de suite.", "target": "start", "action": "boireBiere", "condition": "aBiere" },
+      { "text": "Courir au dépanneur du coin.", "target": "depanneur" },
+      { "text": "Aller niaiser dans la ruelle.", "target": "ruelle" },
+      { "text": "Gosser dans le garage à skidoo.", "target": "garage" },
+      { "text": "Prendre le métro vers le centre-ville.", "target": "station_metro", "condition": "billetMetro" },
+      { "text": "Aller fêter ta victoire au bar.", "target": "epilogue", "condition": "victoire" }
     ]
   },
-  "autel_ancien": {
-    "title": "Murmure de l'Autel",
-    "location": "Autel du Premier Feu",
-    "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
-    "imageAlt": "Autel de pierre entouré de bougies",
-    "text": "<p>Les flammes vacillent et dessinent des runes anciennes. Une chaleur apaisante vous entoure et vos pensées s'ordonnent.</p>",
-    "choices": [
-      { "text": "Regagner la place du Soleil, l'esprit clair.", "target": "place_centrale" }
-    ]
-  },
-  "place_centrale": {
-    "title": "La Place du Soleil",
-    "location": "Cœur de Lysandre",
-    "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
-    "imageAlt": "Place pavée animée",
-    "text": "<p>Artisans, gardes et ménestrels se croisent au pied de l'obélisque solaire. Les regards se tournent vers vous avec espoir.</p>",
-    "choices": [
-      { "text": "Rejoindre la caserne et le capitaine Elian.", "target": "caserne" },
-      { "text": "Explorer le marché nocturne.", "target": "marche_enchante" },
-      { "text": "S'engouffrer sous la tente de l'oracle.", "target": "oracle_tente" },
-      { "text": "Quitter la ville vers la forêt de la Lueur.", "target": "depart_foret", "condition": "briefingRecu" },
-      { "text": "Gravir à nouveau les remparts pour prendre de la hauteur.", "target": "start" }
-    ]
-  },
-  "caserne": {
-    "title": "Briefing du Capitaine",
-    "location": "Caserne de Lysandre",
-    "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
-    "imageAlt": "Salle d'armes éclairée",
-    "entryActions": ["recevoirBriefing"],
-    "text": "<p>Le capitaine Elian déplie une carte tachée d'encre. &laquo; La forêt de la Lueur est gagnée par l'ombre. Vous seul·e pouvez éteindre la menace. &raquo;</p>",
-    "choices": [
-      { "text": "Promettre de protéger Lysandre et retourner sur la place.", "target": "place_centrale" },
-      { "text": "Étudier la carte stratégique.", "target": "plan_de_route" }
-    ]
-  },
-  "plan_de_route": {
-    "title": "Routes de la Lueur",
-    "location": "Salle des Cartes",
+  "depanneur": {
+    "title": "Dépanneur Chez Lise",
+    "location": "Coin Papineau et la 8e",
     "image": "https://images.unsplash.com/photo-1523475472560-d2df97ec485c?auto=format&fit=crop&w=1200&q=80",
-    "imageAlt": "Carte antique éclairée par une lanterne",
-    "text": "<p>Les trajectoires possibles serpentent entre les racines gigantesques et les marais. Les annotations du capitaine mettent en garde contre un pont chancelant.</p>",
+    "imageAlt": "Un dépanneur de quartier éclairé au néon",
+    "text": "<p>Ça sent le café brûlé pis les journaux mouillés. Lise surveille le frigo des bières en tapant du pied.</p>",
     "choices": [
-      { "text": "Mémoriser l'itinéraire et revenir sur la place.", "target": "place_centrale" }
+      { "text": "Prendre une caisse de Boréale.", "target": "depanneur", "action": "prendreCaisse" },
+      { "text": "Commander une poutine extra sauce.", "target": "depanneur", "action": "acheterPoutine" },
+      { "text": "Placoter avec Lise derrière le comptoir.", "target": "depanneur", "action": "jaserClerk" },
+      { "text": "Retourner au chalet avec le butin.", "target": "start" }
     ]
   },
-  "marche_enchante": {
-    "title": "Marché Enchanté",
-    "location": "Quartier des Artisans",
-    "image": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=80",
-    "imageAlt": "Étal illuminé par des lanternes",
-    "text": "<p>Les parfums de cannelle et d'huile d'armure se mêlent. Une alchimiste vous fait signe tandis qu'un forgeron polit une lame scintillante.</p>",
+  "ruelle": {
+    "title": "Ruelle des Frères Mécaniques",
+    "location": "Derrière le chalet",
+    "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
+    "imageAlt": "Une ruelle enneigée illuminée par des guirlandes",
+    "text": "<p>La neige sale, les graffitis pis le band de garage qui pratique sans gants: bienvenue à la ruelle.</p>",
     "choices": [
-      { "text": "Acheter une potion étoilée.", "target": "place_centrale", "action": "acheterPotion" },
+      { "text": "Fouiller les bacs à la recherche de duct tape.", "target": "ruelle", "action": "trouverDuctTape" },
+      { "text": "Hypa le band avec un cri de ralliement.", "target": "ruelle", "action": "encouragerBand" },
+      { "text": "Partager une bière avec les voisins.", "target": "ruelle", "action": "boireBiere", "condition": "aBiere" },
+      { "text": "Retourner au chalet avant de geler.", "target": "start" }
+    ]
+  },
+  "garage": {
+    "title": "Garage à Skidoo",
+    "location": "Sous-sol du chalet",
+    "image": "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80",
+    "imageAlt": "Un garage rempli de vieux équipements de hockey",
+    "text": "<p>Des bâtons fendus, des pads qui sentent le vécu pis une tonne de souvenirs de tournois de garage.</p>",
+    "choices": [
+      { "text": "Bricoler un casque de fortune avec du duct tape.", "target": "garage", "action": "improviserCasque", "condition": "aDuctTape" },
+      { "text": "Inspecter les vieilles épaulettes.", "target": "garage" },
+      { "text": "Retourner au chalet.", "target": "start" }
+    ]
+  },
+  "station_metro": {
+    "title": "Station Pie-IX",
+    "location": "Quai direction centre-ville",
+    "image": "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=1200&q=80",
+    "imageAlt": "Un quai de métro montréalais avec des néons bleus",
+    "text": "<p>Mimi t'attend, stressée mais game. Le métro arrive dans un grincement métallique.</p>",
+    "choices": [
+      { "text": "Motiver Mimi pour la veillée.", "target": "station_metro", "action": "motiverMimi" },
+      { "text": "Descendre au sous-sol du bar La Pogne.", "target": "bar_sous_sol", "condition": "casquePret" },
+      { "text": "Changer d'idée pis retourner au chalet.", "target": "start" }
+    ]
+  },
+  "bar_sous_sol": {
+    "title": "Sous-sol du Bar La Pogne",
+    "location": "Centre-ville",
+    "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
+    "imageAlt": "Un bar souterrain avec des lumières rouges",
+    "text": "<p>La mascotte des Nord-Est bloque la scène, brassant tout le monde. Faut remettre l'ordre avant que la police débarque.</p>",
+    "choices": [
+      { "text": "Descendre une bière pour te gonfler.", "target": "bar_sous_sol", "action": "boireBiere", "condition": "aBiere" },
+      { "text": "Engouffrer ta poutine pour prendre du tonus.", "target": "bar_sous_sol", "action": "mangerPoutine", "condition": "aPoutine" },
+      { "text": "Faire face à la mascotte dans le ring de danse.", "target": "combat_mascotte" },
+      { "text": "Reculer vers le métro avant que ça dégénère.", "target": "station_metro" }
+    ]
+  },
+  "combat_mascotte": {
+    "title": "Showdown dans le ring",
+    "location": "Piste collante du bar",
+    "image": "https://images.unsplash.com/photo-1515165562835-c4c3b96d3c0c?auto=format&fit=crop&w=1200&q=80",
+    "imageAlt": "Deux personnes qui s'affrontent dans une ambiance de bar",
+    "text": "<p>La mascotte te pointe du doigt avec sa tête géante. Toute la foule scande ton nom.</p>",
+    "choices": [
       {
-        "text": "Marchander une lame d'argent bénie.",
-        "dice": { "faces": 20, "threshold": 12, "onSuccess": "lame_obtenue", "onFailure": "marchand_mecontent" }
+        "text": "Lancer ton attaque signature de la brosse ultime.",
+        "dice": { "faces": 20, "threshold": 12, "onSuccess": "victoire_finale", "onFailure": "defaite_finale" }
       },
-      { "text": "Retourner sur la place du Soleil.", "target": "place_centrale" }
+      { "text": "Retourner te préparer mieux.", "target": "bar_sous_sol" }
     ]
   },
-  "lame_obtenue": {
-    "title": "Lame Accordée",
-    "location": "Forge de Lysandre",
-    "image": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80",
-    "imageAlt": "Forgeron présentant une épée",
-    "entryActions": ["obtenirLameArgent"],
-    "text": "<p>Le forgeron hoche la tête, impressionné par votre détermination. La lame brille d'un éclat lunaire en frôlant votre armure.</p>",
+  "victoire_finale": {
+    "title": "Champion de la Veillée",
+    "location": "Scène du bar",
+    "image": "https://images.unsplash.com/photo-1512427691650-1e0c96d3c48a?auto=format&fit=crop&w=1200&q=80",
+    "imageAlt": "Une foule en liesse sous des confettis",
+    "entryActions": ["victoireBagarre"],
+    "text": "<p>La mascotte s'écrase dans les ballons de bière. La foule te soulève pendant que Mimi brandit le trophée.</p>",
     "choices": [
-      { "text": "Remercier le forgeron et revenir sur la place.", "target": "place_centrale" }
+      { "text": "Retourner annoncer la bonne nouvelle au chalet.", "target": "start" },
+      { "text": "Rester danser jusqu'à la fermeture.", "target": "epilogue" }
     ]
   },
-  "marchand_mecontent": {
-    "title": "Marchand Outré",
-    "location": "Forge de Lysandre",
-    "image": "https://images.unsplash.com/photo-1472457847783-3d10540b03d7?auto=format&fit=crop&w=1200&q=80",
-    "imageAlt": "Marchand en colère",
-    "entryActions": ["froisserMarchand"],
-    "text": "<p>Le forgeron croise les bras et refuse votre offre. Les badauds murmurent, déçus de votre audace.</p>",
+  "defaite_finale": {
+    "title": "Mascotte 1 - Toi 0",
+    "location": "Escalier du bar",
+    "image": "https://images.unsplash.com/photo-1511918984145-48de785d4c4d?auto=format&fit=crop&w=1200&q=80",
+    "imageAlt": "Une personne épuisée assise sur des marches",
+    "entryActions": ["defaiteBagarre"],
+    "text": "<p>Tu manges une jambette du costume géant pis tu roules jusqu'au vestiaire. Rien n'est perdu, mais ça pince.</p>",
     "choices": [
-      { "text": "Battre en retraite vers la place, penaud·e.", "target": "place_centrale" }
-    ]
-  },
-  "oracle_tente": {
-    "title": "Vision de l'Aube",
-    "location": "Tente de l'Oracle",
-    "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
-    "imageAlt": "Oracle entourée de voiles colorés",
-    "entryActions": ["recevoirProphetie"],
-    "text": "<p>Des fils de lumière se tissent autour de vous. L'oracle décrit une silhouette de cendre blottie dans une grotte au cœur de la forêt.</p>",
-    "choices": [
-      { "text": "Quitter la tente, le cœur troublé.", "target": "place_centrale" },
-      { "text": "Ancrer la vision dans l'instant présent.", "target": "place_centrale", "action": "bannirVision" }
-    ]
-  },
-  "depart_foret": {
-    "title": "Seuil des Racines",
-    "location": "Portail de la forêt de la Lueur",
-    "image": "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80",
-    "imageAlt": "Chemin forestier à l'aube",
-    "text": "<p>La porte de bois s'ouvre sur une mer de brume dorée. L'air est chargé d'électricité. Le chemin de l'Émissaire commence véritablement ici.</p>",
-    "choices": [
-      { "text": "Franchir le pont chancelant.", "target": "pont_chancelant" },
-      { "text": "Suivre le sentier noyé de brume.", "target": "sentier_brouillard" },
-      { "text": "Revenir à Lysandre pour se préparer davantage.", "target": "place_centrale" }
-    ]
-  },
-  "pont_chancelant": {
-    "title": "Pont des Racines",
-    "location": "Gouffre des Murmures",
-    "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
-    "imageAlt": "Pont suspendu dans la brume",
-    "text": "<p>Chaque planche gémit sous vos pas. Le gouffre avale la lumière et seule votre détermination vous guide.</p>",
-    "choices": [
-      {
-        "text": "Avancer avec assurance malgré le vertige.",
-        "dice": { "faces": 20, "threshold": 10, "onSuccess": "clairiere", "onFailure": "ravin" }
-      }
-    ]
-  },
-  "ravin": {
-    "title": "Chute et Résilience",
-    "location": "Fond du ravin",
-    "image": "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80",
-    "imageAlt": "Ravin envahi de brume",
-    "entryActions": ["subirBlessure"],
-    "text": "<p>Vous glissez et tombez dans un amas de fougères. La douleur pulse, mais la lumière filtre encore entre les branches.</p>",
-    "choices": [
-      { "text": "Ramper jusqu'au sentier noyé de brume.", "target": "sentier_brouillard" },
-      { "text": "Panser vos plaies avec des herbes lumineuses.", "target": "ravin", "action": "utiliserHerbes", "condition": "aHerbes" }
-    ]
-  },
-  "sentier_brouillard": {
-    "title": "Sentier de Brume",
-    "location": "Forêt de la Lueur",
-    "image": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80",
-    "imageAlt": "Sentier forestier brumeux",
-    "entryActions": ["calmerEsprit"],
-    "text": "<p>Les arbres chantent doucement. Des lucioles dessinent un chemin mouvant entre les troncs.</p>",
-    "choices": [
-      { "text": "Suivre la lumière vers la clairière.", "target": "clairiere" },
-      { "text": "Cueillir des herbes lumineuses.", "target": "sentier_brouillard", "action": "cueillirHerbes" },
-      { "text": "Revenir vers le pont des racines.", "target": "pont_chancelant" }
-    ]
-  },
-  "clairiere": {
-    "title": "Clairière du Cœur-d'Aube",
-    "location": "Forêt de la Lueur",
-    "image": "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80",
-    "imageAlt": "Clairière baignée de lumière",
-    "entryActions": ["releverDefi"],
-    "text": "<p>Un puits de lumière éclaire un cercle de pierres runiques. Au loin, l'entrée d'une grotte respire une brume glacée.</p>",
-    "choices": [
-      { "text": "Cueillir des herbes scintillantes.", "target": "clairiere", "action": "cueillirHerbes" },
-      { "text": "Avancer vers la grotte à l'est.", "target": "grotte_entree" },
-      { "text": "Retourner sur le sentier noyé de brume.", "target": "sentier_brouillard" }
-    ]
-  },
-  "grotte_entree": {
-    "title": "Souffle de la Grotte",
-    "location": "Entrée du sanctuaire",
-    "image": "https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?auto=format&fit=crop&w=1200&q=80",
-    "imageAlt": "Entrée de grotte mystérieuse",
-    "text": "<p>Un vent froid vous accueille. Des symboles brûlent faiblement sur les parois. L'ombre que vous traquez n'est plus qu'à quelques pas.</p>",
-    "choices": [
-      { "text": "Boire la potion étoilée.", "target": "grotte_entree", "action": "boirePotion", "condition": "aPotion" },
-      { "text": "Serrer la lame d'argent et avancer.", "target": "combat_ombre", "condition": "aLameArgent" },
-      { "text": "Entrer malgré l'absence d'arme bénie.", "target": "combat_ombre" },
-      { "text": "Revenir à la clairière pour réfléchir.", "target": "clairiere" }
-    ]
-  },
-  "combat_ombre": {
-    "title": "Face à l'Ombre",
-    "location": "Sanctuaire obscur",
-    "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
-    "imageAlt": "Silhouette sombre dans une grotte",
-    "text": "<p>Une silhouette de cendres se détache des ténèbres. Ses yeux braisent d'une lueur cramoisie alors qu'elle fond sur vous.</p>",
-    "choices": [
-      {
-        "text": "Déchaîner toute votre lumière.",
-        "dice": { "faces": 20, "threshold": 13, "onSuccess": "victoire", "onFailure": "defaite" }
-      }
-    ]
-  },
-  "victoire": {
-    "title": "Lueur Triomphante",
-    "location": "Sanctuaire baigné de lumière",
-    "image": "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80",
-    "imageAlt": "Salle illuminée par la lumière du soleil",
-    "entryActions": ["triompheOmbre"],
-    "text": "<p>L'ombre se dissipe en un souffle glacé. Une relique dorée lévite au-dessus du sol, pulsant au rythme de votre cœur.</p>",
-    "choices": [
-      { "text": "Retourner à Lysandre annoncer la victoire.", "target": "epilogue" },
-      { "text": "Rester un moment à méditer auprès de la relique.", "target": "sentier_brouillard" }
-    ]
-  },
-  "defaite": {
-    "title": "Marques d'Ombre",
-    "location": "Sanctuaire obscur",
-    "image": "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80",
-    "imageAlt": "Grotte plongée dans la pénombre",
-    "entryActions": ["subirBlessureGrave"],
-    "text": "<p>L'ombre repousse votre assaut. Votre armure cède sous ses griffes, mais la flamme en vous refuse de s'éteindre.</p>",
-    "choices": [
-      { "text": "Reculer pour panser vos plaies.", "target": "sentier_brouillard" },
-      { "text": "Tenter une nouvelle charge.", "target": "combat_ombre" },
-      { "text": "Utiliser des herbes lumineuses.", "target": "defaite", "action": "utiliserHerbes", "condition": "aHerbes" }
+      { "text": "Revenir dans le bar, plus prêt que jamais.", "target": "bar_sous_sol" },
+      { "text": "Retourner au chalet pour te refaire une santé.", "target": "start" }
     ]
   },
   "epilogue": {
-    "title": "Retour en Héros",
-    "location": "Place du Soleil",
-    "image": "https://images.unsplash.com/photo-1520962922320-2038eebab146?auto=format&fit=crop&w=1200&q=80",
-    "imageAlt": "Foule en liesse",
-    "text": "<p>La cité acclame votre retour. Les cloches de Lysandre résonnent tandis que l'obélisque reflète la lumière nouvelle que vous rapportez.</p><p>Votre nom sera chanté tant que l'aube se lèvera.</p>",
+    "title": "After dans la cuisine",
+    "location": "Chalet du Fjord",
+    "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
+    "imageAlt": "Des amis qui rient autour d'une table de cuisine",
+    "text": "<p>La musique est douce, la neige tombe dehors pis tout le monde t'écoute raconter ton duel légendaire.</p><p>La brosse ultime est réussie. T'es une légende du quartier.</p>",
     "choices": [
-      { "text": "Revivre l'aventure depuis les remparts.", "target": "start" }
+      { "text": "Revivre la soirée depuis le début.", "target": "start" }
     ]
   }
 }

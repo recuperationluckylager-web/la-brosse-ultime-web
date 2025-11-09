@@ -1,8 +1,13 @@
-function cloneInventory(state) {
-  return (state.inventory || []).map((item) => ({ ...item }));
+const STAT_MIN = 0;
+const STAT_MAX = 15;
+
+function cloneInventory(source) {
+  const base = Array.isArray(source) ? source : source.inventory || [];
+  return base.map((item) => ({ ...item }));
 }
-function upsertItem(state, id, delta = 1) {
-  const inv = cloneInventory(state);
+
+function upsertItem(state, id, delta = 1, inventoryOverride = null) {
+  const inv = cloneInventory(inventoryOverride ?? state);
   const idx = inv.findIndex((entry) => entry.id === id);
   if (idx >= 0) {
     inv[idx].qty = Math.max(0, inv[idx].qty + delta);
@@ -12,140 +17,179 @@ function upsertItem(state, id, delta = 1) {
   }
   return inv;
 }
+
 function addFlag(state, flag) {
   const flags = new Set(state.flags || []);
   flags.add(flag);
   return [...flags];
 }
-function removeFlag(state, flag) {
-  const flags = new Set(state.flags || []);
-  flags.delete(flag);
-  return [...flags];
+
+function hasFlag(state, flag) {
+  return (state.flags || []).includes(flag);
 }
-function clamp(value, min, max) {
+
+function clamp(value, min = STAT_MIN, max = STAT_MAX) {
   return Math.min(max, Math.max(min, value));
 }
 
+function statValue(state, key) {
+  return state.stats?.[key] ?? 0;
+}
+
+function adjustStats(state, deltas) {
+  const result = {};
+  for (const [key, delta] of Object.entries(deltas)) {
+    if (typeof delta !== "number" || Number.isNaN(delta)) continue;
+    result[key] = clamp(statValue(state, key) + delta);
+  }
+  return result;
+}
+
 export const actions = {
-  mediterAutel(state) {
-    const esprit = clamp((state.stats?.esprit || 0) + 1, 0, 12);
+  prendreCaisse(state) {
+    if (hasFlag(state, "caisse_boreale")) {
+      return {
+        log: "Le frigo du dépanneur est vidé; Lise te dit d'attendre la prochaine livraison.",
+      };
+    }
+    const inventory = upsertItem(state, "biere", 6);
+    const stats = adjustStats(state, { brosse: 1, buzz: 1, lucidite: -1 });
+    const flags = addFlag(state, "caisse_boreale");
     return {
-      state: { stats: { esprit } },
-      log: 'La méditation calme vos pensées et affûte votre esprit.',
+      state: { inventory, stats, flags },
+      log: "Tu charges une caisse de Boréale bien froide. La brosse s'annonce musclée.",
     };
   },
-  recevoirBriefing(state) {
-    const renommee = (state.stats?.renommee || 0) + 1;
-    const flags = addFlag(state, 'briefing_recu');
+
+  acheterPoutine(state) {
+    if (hasFlag(state, "poutine_depan")) {
+      return { log: "Le comptoir de poutine est fermé jusqu'à demain matin." };
+    }
+    const inventory = upsertItem(state, "poutine", 1);
+    const stats = adjustStats(state, { buzz: 1 });
+    const flags = addFlag(state, "poutine_depan");
     return {
-      state: { stats: { renommee }, flags },
-      log: 'Le capitaine Elian vous confie la sauvegarde de Lysandre.',
+      state: { inventory, stats, flags },
+      log: "Une bonne poutine graisseuse te promet un boost quand le party tombera.",
     };
   },
-  recevoirProphetie(state) {
-    const esprit = clamp((state.stats?.esprit || 0) + 1, 0, 12);
-    const flags = addFlag(state, 'vision_recue');
-    const inventory = upsertItem(state, 'amulette_oracle', 1);
+
+  mangerPoutine(state) {
+    const hasPoutine = (state.inventory || []).find((item) => item.id === "poutine" && item.qty > 0);
+    if (!hasPoutine) {
+      return { log: "T'as plus de poutine. Faudra t'en racheter une autre." };
+    }
+    const inventory = upsertItem(state, "poutine", -1);
+    const stats = adjustStats(state, { tenacite: 2, lucidite: 1 });
     return {
-      state: { stats: { esprit }, flags, inventory },
-      log: "L'oracle noue une amulette au creux de votre main et murmure la voie du soleil.",
+      state: { inventory, stats },
+      log: "Tu manges ta poutine en deux bouchées. Ça te remet le cœur et la tête à la bonne place.",
     };
   },
-  acheterPotion(state) {
-    const inventory = upsertItem(state, 'potion_etoilee', 1);
+
+  boireBiere(state) {
+    const hasBiere = (state.inventory || []).find((item) => item.id === "biere" && item.qty > 0);
+    if (!hasBiere) {
+      return { log: "Y reste plus de bière dans la glacière. C'est plate." };
+    }
+    const inventory = upsertItem(state, "biere", -1);
+    const stats = adjustStats(state, { brosse: 2, buzz: 1, lucidite: -2 });
     return {
-      state: { inventory },
-      log: 'Le marchand sourit et glisse une potion étoilée dans votre besace.',
+      state: { inventory, stats },
+      log: "Tu claques une Boréale d'un coup sec. La brosse monte, mais tes idées se mélangent.",
     };
   },
-  obtenirLameArgent(state) {
-    const inventory = upsertItem(state, 'lame_argent', 1);
-    const courage = clamp((state.stats?.courage || 0) + 1, 0, 12);
-    const renommee = (state.stats?.renommee || 0) + 1;
+
+  jaserClerk(state) {
+    if (hasFlag(state, "clerk_ami")) {
+      return { log: "Le commis te fait déjà des rabais. Vous êtes rendus chum à chum." };
+    }
+    const stats = adjustStats(state, { relation: 2, lucidite: 1 });
+    const flags = addFlag(state, "clerk_ami");
+    const inventory = upsertItem(state, "billet_metro", 1);
     return {
-      state: { inventory, stats: { courage, renommee } },
-      log: "La lame d'argent chante lorsqu'elle rencontre votre poigne assurée.",
+      state: { stats, flags, inventory },
+      log: "Lise te glisse un billet de métro gratis pis jase des ragots du quartier.",
     };
   },
-  froisserMarchand(state) {
-    const renommee = Math.max(0, (state.stats?.renommee || 0) - 1);
+
+  trouverDuctTape(state) {
+    if (hasFlag(state, "duct_trouve")) {
+      return { log: "Le bac de recyclage est vide; t'as déjà ramassé le duct tape utile." };
+    }
+    const inventory = upsertItem(state, "duct_tape", 1);
+    const stats = adjustStats(state, { tenacite: 1 });
+    const flags = addFlag(state, "duct_trouve");
     return {
-      state: { stats: { renommee } },
-      log: 'Le marchand outré répand des rumeurs sur votre nom.',
+      state: { inventory, stats, flags },
+      log: "Parmi les vidanges, tu repognes un rouleau de duct tape encore bon. Un vrai trésor de ruelle.",
     };
   },
-  cueillirHerbes(state) {
-    const inventory = upsertItem(state, 'herbes_lumineuses', 1);
-    const vitalite = clamp((state.stats?.vitalite || 0) + 1, 0, 12);
+
+  encouragerBand(state) {
+    if (hasFlag(state, "band_pompe")) {
+      return { log: "La gang de musique est déjà sur un high. Ils te font un clin d'œil complice." };
+    }
+    const stats = adjustStats(state, { buzz: 2, relation: 1 });
+    const flags = addFlag(state, "band_pompe");
     return {
-      state: { inventory, stats: { vitalite } },
-      log: 'Les herbes lumineuses diffusent une chaleur réconfortante.',
+      state: { stats, flags },
+      log: "Tu cries « On lâche pas la patate! » et le band repart de plus belle. Toute la ruelle vibre.",
     };
   },
-  subirBlessure(state) {
-    const vitalite = clamp((state.stats?.vitalite || 0) - 2, 0, 12);
+
+  improviserCasque(state) {
+    if (hasFlag(state, "casque_bricole")) {
+      return { log: "Ton casque de fortune tient encore. Inutile de le regosser." };
+    }
+    const inv = cloneInventory(state);
+    const tapeIndex = inv.findIndex((item) => item.id === "duct_tape");
+    if (tapeIndex < 0) {
+      return { log: "Sans duct tape, impossible de bricoler quoi que ce soit." };
+    }
+    inv[tapeIndex].qty -= 1;
+    if (inv[tapeIndex].qty <= 0) inv.splice(tapeIndex, 1);
+    const casqueIndex = inv.findIndex((item) => item.id === "casque_hockey");
+    if (casqueIndex >= 0) inv[casqueIndex].qty += 1;
+    else inv.push({ id: "casque_hockey", qty: 1 });
+    const stats = adjustStats(state, { tenacite: 2, relation: 1 });
+    const flags = addFlag(state, "casque_bricole");
     return {
-      state: { stats: { vitalite } },
-      log: 'La chute vous meurtrit, mais vous jurez de vous relever.',
+      state: { inventory: inv, stats, flags },
+      log: "Avec du duct tape, une vieille épaule-pad pis du cœur, tu te fabriques un casque digne de la LNH.",
     };
   },
-  releverDefi(state) {
-    const courage = clamp((state.stats?.courage || 0) + 1, 0, 12);
+
+  motiverMimi(state) {
+    if (hasFlag(state, "mimi_boost")) {
+      return { log: "Mimi est déjà gonflée à bloc. Elle t'envoie un bec sur la joue." };
+    }
+    const stats = adjustStats(state, { relation: 2, buzz: 1 });
+    const flags = addFlag(state, "mimi_boost");
     return {
-      state: { stats: { courage } },
-      log: 'Votre détermination embrase la clairière.',
+      state: { stats, flags },
+      log: "Tu rassures Mimi: « On va faire lever le toit, ma chum! » Son sourire illumine la station.",
     };
   },
-  boirePotion(state) {
-    const hasPotion = (state.inventory || []).find((item) => item.id === 'potion_etoilee' && item.qty > 0);
-    if (!hasPotion) return {};
-    const inventory = upsertItem(state, 'potion_etoilee', -1);
-    const vitalite = clamp((state.stats?.vitalite || 0) + 2, 0, 12);
-    const esprit = clamp((state.stats?.esprit || 0) + 1, 0, 12);
+
+  victoireBagarre(state) {
+    if (hasFlag(state, "bagarre_gagnee")) {
+      return { log: "La mascotte est déjà à terre. La soirée est sauvée pour de bon." };
+    }
+    const stats = adjustStats(state, { buzz: 3, relation: 2 });
+    const flags = addFlag(state, "bagarre_gagnee");
+    const inventory = upsertItem(state, "trophee_brosse", 1);
     return {
-      state: { inventory, stats: { vitalite, esprit } },
-      log: 'La potion étoilée illumine vos veines et ranime votre esprit.',
+      state: { stats, flags, inventory },
+      log: "Tu sacres la mascotte dehors. Le bar explose de joie pis on te remet le trophée de la brosse ultime.",
     };
   },
-  utiliserHerbes(state) {
-    const hasHerbes = (state.inventory || []).find((item) => item.id === 'herbes_lumineuses' && item.qty > 0);
-    if (!hasHerbes) return {};
-    const inventory = upsertItem(state, 'herbes_lumineuses', -1);
-    const vitalite = clamp((state.stats?.vitalite || 0) + 3, 0, 12);
+
+  defaiteBagarre(state) {
+    const stats = adjustStats(state, { brosse: -1, buzz: -2, tenacite: -2, lucidite: -1 });
     return {
-      state: { inventory, stats: { vitalite } },
-      log: 'Vous mâchez les herbes lumineuses, ressentant une vague de vitalité.',
-    };
-  },
-  triompheOmbre(state) {
-    const flags = addFlag(state, 'ombre_vaincue');
-    const inventory = upsertItem(state, 'relique_aube', 1);
-    const renommee = (state.stats?.renommee || 0) + 2;
-    const courage = clamp((state.stats?.courage || 0) + 1, 0, 12);
-    return {
-      state: { flags, inventory, stats: { renommee, courage } },
-      log: "L'ombre se dissipe et laisse place à la relique de l'aube.",
-    };
-  },
-  subirBlessureGrave(state) {
-    const vitalite = clamp((state.stats?.vitalite || 0) - 3, 0, 12);
-    return {
-      state: { stats: { vitalite } },
-      log: "Les griffes de l'ombre entaillent votre armure.",
-    };
-  },
-  calmerEsprit(state) {
-    const esprit = clamp((state.stats?.esprit || 0) + 1, 0, 12);
-    return {
-      state: { stats: { esprit } },
-      log: 'Le murmure des arbres apaise vos doutes.',
-    };
-  },
-  bannirVision(state) {
-    const flags = removeFlag(state, 'vision_recue');
-    return {
-      state: { flags },
-      log: 'Vous ancrez la prophétie dans la réalité et passez à l’action.',
+      state: { stats },
+      log: "La mascotte t'envoie une volée. Tu recules en jurant de revenir mieux préparé.",
     };
   },
 };
