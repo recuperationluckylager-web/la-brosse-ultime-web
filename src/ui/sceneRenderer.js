@@ -28,12 +28,13 @@ export class SceneRenderer {
           </main>
           <aside class="lg:col-span-1 space-y-6">
             <div class="stats bg-[color:var(--fjord-light)] p-6 rounded-lg shadow-lg">
-              <h3 class="font-title text-2xl text-white mb-4 border-b border-gray-600 pb-2">Profil</h3>
+              <h3 class="font-title text-2xl text-white mb-4 border-b border-gray-600 pb-2">Fiche du party</h3>
               <ul class="space-y-2 text-lg">
-                <li>Courage : <span id="s-courage" class="font-bold text-[color:var(--beer-gold)]">0</span></li>
-                <li>Esprit : <span id="s-esprit" class="font-bold text-sky-300">0</span></li>
-                <li>Vitalité : <span id="s-vitalite" class="font-bold text-emerald-300">0</span></li>
-                <li>Renommée : <span id="s-renommee" class="font-bold text-purple-300">0</span></li>
+                <li>Brosse : <span id="s-brosse" class="font-bold text-[color:var(--beer-gold)]">0</span></li>
+                <li>Buzz : <span id="s-buzz" class="font-bold text-sky-300">0</span></li>
+                <li>Lucidité : <span id="s-lucidite" class="font-bold text-emerald-300">0</span></li>
+                <li>Ténacité : <span id="s-tenacite" class="font-bold text-rose-300">0</span></li>
+                <li>Relation : <span id="s-relation" class="font-bold text-purple-300">0</span></li>
               </ul>
             </div>
             <div class="inventory bg-[color:var(--fjord-light)] p-6 rounded-lg shadow-lg">
@@ -149,10 +150,11 @@ export class SceneRenderer {
       const el = document.getElementById(id);
       if (el) el.textContent = value;
     };
-    setText('s-courage', stats.courage ?? 0);
-    setText('s-esprit', stats.esprit ?? 0);
-    setText('s-vitalite', stats.vitalite ?? 0);
-    setText('s-renommee', stats.renommee ?? 0);
+    setText('s-brosse', stats.brosse ?? 0);
+    setText('s-buzz', stats.buzz ?? 0);
+    setText('s-lucidite', stats.lucidite ?? 0);
+    setText('s-tenacite', stats.tenacite ?? 0);
+    setText('s-relation', stats.relation ?? 0);
   }
   renderInventory(state) {
     const grid = document.getElementById('inventory-grid');

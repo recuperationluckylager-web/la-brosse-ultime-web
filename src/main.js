@@ -1,21 +1,21 @@
 /*
- * MOTEUR : LA BROSSE ULTIME v2.0 (Modulaire)
- * CHEF D'ORCHESTRE par MegaMind Genius
- * * Ce script est le nouveau "cerveau" qui connecte tous tes modules.
+ * LA BROSSE ULTIME — ÉDITION JOUAL
+ * Moteur modulaire pour un RPG de veillée québécoeurant.
  */
 
-// 1. Importe tous tes modules de génie (AVEC LES BONS CHEMINS !)
 import { Store } from './core/store.js';
 import { Persistence } from './core/persistence.js';
 import { SceneRenderer } from './ui/sceneRenderer.js';
 import { actions } from './core/actions.js';
-import { dice } from './core/diceManager.js'; // On importe ton nouveau module de dés
+import { dice } from './core/diceManager.js';
 
-// Fonction de démarrage asynchrone pour charger les données
+function hasItem(state, id) {
+  return (state.inventory || []).some((item) => item.id === id && item.qty > 0);
+}
+
 async function startLegendaryGame() {
-  console.log('Moteur v2.0... Démarrage des cœurs logiques...');
+  console.log('La Brosse Ultime — boot du moteur');
 
-  // 2. Charger toutes tes données de jeu (depuis le dossier /data !)
   const [scenes, items, map] = await Promise.all([
     fetch('./data/scenes.json').then((res) => res.json()),
     fetch('./data/items.json').then((res) => res.json()),
@@ -23,67 +23,58 @@ async function startLegendaryGame() {
   ]);
 
   const conditions = {
-    briefingRecu: (state) => (state.flags || []).includes('briefing_recu'),
-    aPotion: (state) => (state.inventory || []).some((item) => item.id === 'potion_etoilee' && item.qty > 0),
-    aLameArgent: (state) => (state.inventory || []).some((item) => item.id === 'lame_argent' && item.qty > 0),
-    aHerbes: (state) => (state.inventory || []).some((item) => item.id === 'herbes_lumineuses' && item.qty > 0),
-    visionOracle: (state) => (state.flags || []).includes('vision_recue'),
-    herosCouronne: (state) => (state.flags || []).includes('ombre_vaincue'),
+    aBiere: (state) => hasItem(state, 'biere'),
+    aPoutine: (state) => hasItem(state, 'poutine'),
+    aDuctTape: (state) => hasItem(state, 'duct_tape'),
+    billetMetro: (state) => hasItem(state, 'billet_metro'),
+    casquePret: (state) => (state.flags || []).includes('casque_bricole'),
+    amiClerk: (state) => (state.flags || []).includes('clerk_ami'),
+    bandPompe: (state) => (state.flags || []).includes('band_pompe'),
+    victoire: (state) => (state.flags || []).includes('bagarre_gagnee'),
   };
 
   const assets = { scenes, items, map, dice, conditions };
   console.log('Assets chargés :', assets);
 
-  // 3. Définir l'état initial de ton jeu
   const initialState = {
     currentScene: 'start',
-    location: 'Citadelle de Lysandre',
-    stats: { courage: 2, esprit: 3, vitalite: 5, renommee: 0 },
-    inventory: [{ id: 'carte_royaume', qty: 1 }],
-    mapZones: ['lysandre'],
-    journal: ["Le souffle de l'aube porte votre nom."],
+    location: 'Chalet du Fjord',
+    stats: { brosse: 3, buzz: 2, lucidite: 8, tenacite: 6, relation: 1 },
+    inventory: [{ id: 'biere', qty: 2 }],
+    mapZones: ['chalet'],
+    journal: ['La gang se chauffe pour la veillée.'],
     flags: [],
   };
 
-  // 4. Initialiser le Store (Ton cerveau d'état)
   const store = new Store(initialState);
   store.registerActions(actions);
   console.log('Store initialisé.');
 
-  // 5. Initialiser la Persistance (Sauvegarde/Chargement)
-  const persistence = new Persistence(store, 'brosseUltimeSave_v2'); // Clé v2 !
+  const persistence = new Persistence(store, 'brosseUltimeSave_v3');
 
-  // Essaye de charger une sauvegarde
   if (persistence.load()) {
     console.log('Partie sauvegardée chargée !');
   } else {
-    console.log("Aucune sauvegarde trouvée, démarrage d'une nouvelle partie.");
+    console.log("Nouvelle partie, attache ta tuque.");
   }
 
-  // Sauvegarde automatique à chaque changement
-  store.subscribe((newState) => {
-    console.log("Changement d'état détecté, sauvegarde...");
+  store.subscribe(() => {
     persistence.save();
   });
 
-  // 6. Initialiser le Moteur de Rendu
-  // On lui donne le 'store' (pour les données) et les 'assets' (pour les scènes/items)
   const renderer = new SceneRenderer(
-    document.getElementById('game-root'), // On cible un conteneur
+    document.getElementById('game-root'),
     store,
     assets,
   );
 
-  // 7. DÉMARRAGE !
   renderer.start();
-  console.log('LA BROSSE ULTIME est EN LIGNE ! Bon jeu, légende.');
+  console.log('La Brosse Ultime est live. Have fun!');
 
-  // Expose pour le débogage
   window.app = { store, renderer, assets, persistence };
 }
 
-// Lance le jeu !
 startLegendaryGame().catch((err) => {
-  console.error('ERREUR DE GÉNIE FATALE :', err);
+  console.error('ERREUR FATALE :', err);
   document.body.innerHTML = `<div style="color:red; font-size: 24px; padding: 50px;">ERREUR FATALE: ${err.message}. Vérifie la console (F12).</div>`;
 });
