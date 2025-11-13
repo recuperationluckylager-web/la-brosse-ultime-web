@@ -1,6 +1,0 @@
-{
-  "name":"brosse-ultime",
-  "version":"0.1.0",
-  "type":"module",
-  "scripts":{"start":"npx http-server -c-1 . -p 8080"}
-}
