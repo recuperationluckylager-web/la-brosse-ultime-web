@@ -36,17 +36,18 @@ async function startLegendaryGame() {
   const assets = { scenes, items, map, dice, conditions };
   console.log('Assets chargés :', assets);
 
-  const initialState = {
+  const baseState = {
     currentScene: 'start',
     location: 'Chalet du Fjord',
     stats: { brosse: 3, buzz: 2, lucidite: 8, tenacite: 6, relation: 1 },
     inventory: [{ id: 'biere', qty: 2 }],
     mapZones: ['chalet'],
+    playerZone: 'chalet',
     journal: ['La gang se chauffe pour la veillée.'],
     flags: [],
   };
 
-  const store = new Store(initialState);
+  const store = new Store(structuredClone(baseState));
   store.registerActions(actions);
   console.log('Store initialisé.');
 
@@ -62,16 +63,17 @@ async function startLegendaryGame() {
     persistence.save();
   });
 
+  const rendererAssets = { ...assets, persistence, initialState: baseState };
   const renderer = new SceneRenderer(
     document.getElementById('game-root'),
     store,
-    assets,
+    rendererAssets,
   );
 
   renderer.start();
   console.log('La Brosse Ultime est live. Have fun!');
 
-  window.app = { store, renderer, assets, persistence };
+  window.app = { store, renderer, assets: rendererAssets, persistence };
 }
 
 startLegendaryGame().catch((err) => {

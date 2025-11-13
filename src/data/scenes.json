@@ -2,6 +2,7 @@
   "start": {
     "title": "La Brosse Ultime",
     "location": "Chalet du Fjord",
+    "zone": "chalet",
     "image": "https://images.unsplash.com/photo-1525182008055-f88b95ff7980?auto=format&fit=crop&w=1200&q=80",
     "imageAlt": "Un sous-sol chaleureux rempli de lumières de fête",
     "text": "<p>Le chalet du cousin Dany grouille déjà. Les canettes cliquent, la neige fond sur les bottes pis la playlist de Offenbach roule en boucle.</p><p>Faut que tu rassembles le kit parfait pour impressionner toute la gang au bar La Pogne.</p>",
@@ -17,6 +18,7 @@
   "depanneur": {
     "title": "Dépanneur Chez Lise",
     "location": "Coin Papineau et la 8e",
+    "zone": "quartier",
     "image": "https://images.unsplash.com/photo-1523475472560-d2df97ec485c?auto=format&fit=crop&w=1200&q=80",
     "imageAlt": "Un dépanneur de quartier éclairé au néon",
     "text": "<p>Ça sent le café brûlé pis les journaux mouillés. Lise surveille le frigo des bières en tapant du pied.</p>",
@@ -30,6 +32,7 @@
   "ruelle": {
     "title": "Ruelle des Frères Mécaniques",
     "location": "Derrière le chalet",
+    "zone": "chalet",
     "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
     "imageAlt": "Une ruelle enneigée illuminée par des guirlandes",
     "text": "<p>La neige sale, les graffitis pis le band de garage qui pratique sans gants: bienvenue à la ruelle.</p>",
@@ -43,6 +46,7 @@
   "garage": {
     "title": "Garage à Skidoo",
     "location": "Sous-sol du chalet",
+    "zone": "chalet",
     "image": "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80",
     "imageAlt": "Un garage rempli de vieux équipements de hockey",
     "text": "<p>Des bâtons fendus, des pads qui sentent le vécu pis une tonne de souvenirs de tournois de garage.</p>",
@@ -55,6 +59,7 @@
   "station_metro": {
     "title": "Station Pie-IX",
     "location": "Quai direction centre-ville",
+    "zone": "centreville",
     "image": "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=1200&q=80",
     "imageAlt": "Un quai de métro montréalais avec des néons bleus",
     "text": "<p>Mimi t'attend, stressée mais game. Le métro arrive dans un grincement métallique.</p>",
@@ -67,6 +72,7 @@
   "bar_sous_sol": {
     "title": "Sous-sol du Bar La Pogne",
     "location": "Centre-ville",
+    "zone": "centreville",
     "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
     "imageAlt": "Un bar souterrain avec des lumières rouges",
     "text": "<p>La mascotte des Nord-Est bloque la scène, brassant tout le monde. Faut remettre l'ordre avant que la police débarque.</p>",
@@ -80,6 +86,7 @@
   "combat_mascotte": {
     "title": "Showdown dans le ring",
     "location": "Piste collante du bar",
+    "zone": "centreville",
     "image": "https://images.unsplash.com/photo-1515165562835-c4c3b96d3c0c?auto=format&fit=crop&w=1200&q=80",
     "imageAlt": "Deux personnes qui s'affrontent dans une ambiance de bar",
     "text": "<p>La mascotte te pointe du doigt avec sa tête géante. Toute la foule scande ton nom.</p>",
@@ -94,6 +101,7 @@
   "victoire_finale": {
     "title": "Champion de la Veillée",
     "location": "Scène du bar",
+    "zone": "centreville",
     "image": "https://images.unsplash.com/photo-1512427691650-1e0c96d3c48a?auto=format&fit=crop&w=1200&q=80",
     "imageAlt": "Une foule en liesse sous des confettis",
     "entryActions": ["victoireBagarre"],
@@ -106,6 +114,7 @@
   "defaite_finale": {
     "title": "Mascotte 1 - Toi 0",
     "location": "Escalier du bar",
+    "zone": "centreville",
     "image": "https://images.unsplash.com/photo-1511918984145-48de785d4c4d?auto=format&fit=crop&w=1200&q=80",
     "imageAlt": "Une personne épuisée assise sur des marches",
     "entryActions": ["defaiteBagarre"],
@@ -118,6 +127,7 @@
   "epilogue": {
     "title": "After dans la cuisine",
     "location": "Chalet du Fjord",
+    "zone": "chalet",
     "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
     "imageAlt": "Des amis qui rient autour d'une table de cuisine",
     "text": "<p>La musique est douce, la neige tombe dehors pis tout le monde t'écoute raconter ton duel légendaire.</p><p>La brosse ultime est réussie. T'es une légende du quartier.</p>",
