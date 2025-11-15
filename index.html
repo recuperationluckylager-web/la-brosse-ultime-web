@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chroniques Néon - Duel de Dés</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="entete">
+        <h1>Chroniques Néon</h1>
+        <p class="sous-titre">
+          Combat narratif avec roulement de dé dans une mégalopole de 2024.
+        </p>
+      </header>
+
+      <section class="champ-bataille">
+        <article class="faction">
+          <h2>Agent Camille</h2>
+          <img src="assets/hero.svg" alt="Portrait de l'agent Camille" class="avatar" />
+          <div class="barres">
+            <label for="pv-joueur">Points de vie</label>
+            <div class="barre" aria-live="polite">
+              <div id="pv-joueur" class="remplissage" role="progressbar" aria-valuemin="0" aria-valuemax="30" aria-valuenow="30"></div>
+            </div>
+            <label for="energie-joueur">Énergie tactique</label>
+            <div class="barre energie" aria-live="polite">
+              <div id="energie-joueur" class="remplissage" role="progressbar" aria-valuemin="0" aria-valuemax="3" aria-valuenow="3"></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="faction">
+          <h2>Hacker Fantôme</h2>
+          <img src="assets/ennemi.svg" alt="Portrait du hacker fantôme" class="avatar" />
+          <div class="barres">
+            <label for="pv-ennemi">Points de vie</label>
+            <div class="barre" aria-live="polite">
+              <div id="pv-ennemi" class="remplissage ennemi" role="progressbar" aria-valuemin="0" aria-valuemax="30" aria-valuenow="30"></div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="controle">
+        <h2>Actions</h2>
+        <div class="boutons">
+          <button id="attaque" class="action">Attaque cybernétique</button>
+          <button id="drone" class="action">Tir de drone (coût 1 énergie)</button>
+          <button id="soin" class="action">Nanomédecine</button>
+          <button id="reset" class="secondaire">Recommencer</button>
+        </div>
+        <div class="des" aria-live="polite">
+          <img id="image-de" src="assets/de.svg" alt="Résultat du dé" />
+          <p id="resultat-de">Résultat du dé : -</p>
+        </div>
+      </section>
+
+      <section class="journal">
+        <h2>Journal de mission</h2>
+        <ul id="historique" class="historique"></ul>
+      </section>
+    </main>
+    <script src="script.js" defer></script>
+  </body>
+</html>

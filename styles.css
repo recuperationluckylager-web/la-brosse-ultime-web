@@ -1,0 +1,242 @@
+:root {
+  --fond: #07111f;
+  --accent: #00f5a0;
+  --accent-fonce: #00996b;
+  --texte: #f1f5f9;
+  --danger: #ff6b6b;
+  --carte: rgba(10, 20, 35, 0.85);
+  --gris: #94a3b8;
+  font-size: 16px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  background: radial-gradient(circle at top, #132a53, var(--fond));
+  color: var(--texte);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+}
+
+.page {
+  max-width: 1080px;
+  width: 100%;
+  background: var(--carte);
+  border-radius: 18px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45);
+  padding: 2.5rem;
+  display: grid;
+  gap: 2rem;
+}
+
+.entete {
+  text-align: center;
+}
+
+.entete h1 {
+  font-size: 2.75rem;
+  letter-spacing: 0.1em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.sous-titre {
+  color: var(--gris);
+  margin-top: 0.5rem;
+  font-size: 1rem;
+}
+
+.champ-bataille {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.faction {
+  background: rgba(7, 18, 36, 0.85);
+  border: 1px solid rgba(0, 245, 160, 0.15);
+  border-radius: 18px;
+  padding: 1.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.faction::after {
+  content: "";
+  position: absolute;
+  inset: -30% -40%;
+  background: radial-gradient(circle at center, rgba(0, 245, 160, 0.12), transparent 65%);
+  pointer-events: none;
+}
+
+.faction h2 {
+  margin-top: 0;
+  font-size: 1.5rem;
+}
+
+.avatar {
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 25px rgba(0, 0, 0, 0.35));
+  margin-bottom: 1rem;
+}
+
+.barres {
+  display: grid;
+  gap: 0.75rem;
+  position: relative;
+  z-index: 1;
+}
+
+.barre {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 999px;
+  height: 16px;
+  overflow: hidden;
+}
+
+.barre label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--gris);
+}
+
+.remplissage {
+  background: linear-gradient(90deg, var(--accent), #57f8d4);
+  height: 100%;
+  width: 100%;
+  border-radius: inherit;
+  transition: width 0.4s ease, background 0.4s ease;
+}
+
+.remplissage.ennemi {
+  background: linear-gradient(90deg, #ff6b6b, #f8a857);
+}
+
+.barre.energie .remplissage {
+  background: linear-gradient(90deg, #00d4ff, #0091ff);
+}
+
+.controle {
+  background: rgba(7, 18, 36, 0.85);
+  border: 1px solid rgba(0, 212, 255, 0.15);
+  border-radius: 18px;
+  padding: 1.5rem;
+}
+
+.controle h2 {
+  margin-top: 0;
+}
+
+.boutons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+button {
+  font-size: 1rem;
+  padding: 0.85rem 1.25rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+button.action {
+  background: linear-gradient(120deg, var(--accent), #6cffe0);
+  color: #05222c;
+  box-shadow: 0 10px 25px rgba(0, 245, 160, 0.35);
+}
+
+button.action:disabled {
+  filter: grayscale(0.8);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+button.secondaire {
+  background: rgba(2, 132, 199, 0.15);
+  color: var(--texte);
+  border: 1px solid rgba(125, 211, 252, 0.2);
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(0, 245, 160, 0.45);
+}
+
+.des {
+  margin-top: 1.5rem;
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+}
+
+.des img {
+  width: 80px;
+  height: 80px;
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.35));
+}
+
+.journal {
+  background: rgba(7, 18, 36, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 18px;
+  padding: 1.5rem;
+  max-height: 320px;
+  overflow: auto;
+}
+
+.historique {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.historique li {
+  background: rgba(15, 32, 57, 0.75);
+  border-left: 4px solid rgba(0, 245, 160, 0.4);
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.historique li.ennemi {
+  border-left-color: rgba(255, 107, 107, 0.6);
+}
+
+.historique li.systeme {
+  border-left-color: rgba(148, 163, 184, 0.6);
+  color: var(--gris);
+  font-style: italic;
+}
+
+@media (max-width: 720px) {
+  body {
+    padding: 1rem;
+  }
+
+  .page {
+    padding: 1.5rem;
+  }
+
+  .avatar {
+    width: 120px;
+    height: 120px;
+  }
+}
